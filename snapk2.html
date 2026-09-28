@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#f7f3ee">
+<title>照食｜AI 飲食管理 Demo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&family=Noto+Serif+TC:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f7f3ee; --paper:#fffdfa; --ink:#282522; --muted:#817971;
+  --line:#e8dfd6; --red:#a83d32; --red2:#c75b4d; --red-soft:#f5e5e1;
+  --green:#607c67; --green-soft:#e8f0e8; --gold:#b18a54;
+  --shadow:0 12px 30px rgba(65,43,28,.08);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;width:100%;min-height:100%;background:#ddd8d2;color:var(--ink);font-family:"Noto Sans TC",sans-serif;overscroll-behavior:none}
+body{touch-action:pan-y}
+button,input,textarea{font:inherit}
+button{border:0;background:none;color:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid rgba(168,61,50,.28);outline-offset:3px}
+.app{
+  width:min(100%,430px); height:100dvh; min-height:100dvh; margin:auto;
+  background:var(--bg); position:relative; overflow:hidden;
+  display:flex; flex-direction:column;
+  box-shadow:0 0 40px rgba(0,0,0,.16);
+}
+.screen{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;padding:calc(14px + env(safe-area-inset-top)) 18px calc(92px + env(safe-area-inset-bottom));scroll-behavior:smooth}
+.serif{font-family:"Noto Serif TC",serif}
+.topline{display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:13px}
+h1{font-family:"Noto Serif TC",serif;font-size:28px;line-height:1.3;margin:7px 0 5px}
+h2{font-family:"Noto Serif TC",serif;font-size:21px;margin:0}
+h3{font-size:16px;margin:0}
+p{margin:0}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+.pulse-line{height:3px;background:var(--red);position:absolute;top:0;left:0;right:0}
+.section{margin-top:18px}
+.section-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.small{font-size:12px;color:var(--muted)}
+.mini-btn{padding:7px 10px;border-radius:10px;background:#f0ebe5;color:#625a54;font-size:12px}
+.hero-note{margin-top:15px;padding:13px 15px;border-radius:14px;background:#f1ebe5;font-size:14px;line-height:1.6}
+.hero-note b{color:var(--red)}
+.focus-row{display:flex;gap:8px;overflow-x:auto;padding:2px 1px 5px;scrollbar-width:none}
+.focus-row::-webkit-scrollbar{display:none}
+.focus-chip{white-space:nowrap;padding:9px 12px;border-radius:999px;background:#eee8e1;border:1px solid transparent;font-size:13px}
+.focus-chip.active{background:var(--red-soft);color:var(--red);border-color:#e8c7c1;font-weight:700}
+.camera-wrap{display:flex;justify-content:center;margin:21px 0 18px}
+.camera{
+  width:198px;height:198px;border-radius:50%;background:var(--red);
+  color:#fff;display:flex;flex-direction:column;justify-content:center;align-items:center;
+  box-shadow:0 18px 34px rgba(168,61,50,.25),inset 0 -8px 0 rgba(0,0,0,.06);
+  position:relative;touch-action:manipulation;
+}
+.camera:before{content:"";position:absolute;inset:10px;border:1px solid rgba(255,255,255,.35);border-radius:50%}
+.camera .icon{font-size:37px;line-height:1}
+.camera strong{font-family:"Noto Serif TC",serif;font-size:29px;margin-top:8px}
+.camera span{font-size:11px;opacity:.86;margin-top:3px}
+.meal-card{display:flex;gap:12px;padding:12px}
+.food-thumb{width:72px;height:72px;border-radius:14px;background:linear-gradient(145deg,#f0cda8,#b75a39);display:grid;place-items:center;font-size:38px;flex:none}
+.meal-info{min-width:0;flex:1}
+.tags{display:flex;gap:6px;flex-wrap:wrap;margin:5px 0}
+.tag{padding:3px 7px;border-radius:999px;background:#eee9e3;color:#685f58;font-size:11px}
+.tag.hot{background:#f7e2dd;color:#9b4136}.tag.cool{background:#e4efea;color:#4e7160}.tag.flat{background:#ecebe4;color:#77724f}
+.meal-title{font-weight:700;font-size:14px}
+.meal-desc{font-size:12px;color:var(--muted);line-height:1.5}
+.stamps{display:flex;gap:8px}
+.stamp{width:38px;height:38px;border:1.5px solid #c98a80;color:var(--red);border-radius:8px;display:grid;place-items:center;font-size:11px;font-weight:700;transform:rotate(-4deg)}
+.stamp.empty{border-style:dashed;color:#c9c0b8;background:transparent}
+.disclaimer{font-size:10px;line-height:1.55;color:#77706a;margin:14px 2px;text-align:center}
+
+.bottom-nav{
+  position:absolute;left:0;right:0;bottom:0;
+  padding:8px 8px calc(8px + env(safe-area-inset-bottom));
+  background:rgba(255,253,250,.97);border-top:1px solid var(--line);
+  display:grid;grid-template-columns:repeat(4,1fr);z-index:20;
+}
+.nav-item{font-size:11px;color:#8b837b;display:flex;flex-direction:column;gap:3px;align-items:center;padding:5px 0}
+.nav-item .nav-icon{font-size:20px;line-height:1}
+.nav-item.active{color:var(--red);font-weight:700}
+
+.view{display:none}.view.active{display:block}
+.back{font-size:13px;color:var(--muted);padding:7px 0}
+.food-visual{height:205px;border-radius:20px;background:linear-gradient(145deg,#e7c29e,#9d4934);display:grid;place-items:center;font-size:105px;box-shadow:var(--shadow);margin-top:8px}
+.analysis-card{margin-top:14px;padding:17px}
+.analysis-card .pulse-line{background:var(--red)}
+.split{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.metric{background:#f4efe9;border-radius:13px;padding:11px}
+.metric b{display:block;font-size:20px;margin-top:2px}
+.metric span{font-size:11px;color:var(--muted)}
+.ai-status{display:flex;gap:9px;align-items:center;padding:12px;border-radius:13px;background:#f7ebe7;color:#8f3e35;margin:12px 0}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--red);animation:blink 1s infinite}
+@keyframes blink{50%{opacity:.3;transform:scale(.7)}}
+.scan-lines{height:3px;background:#e8ddd5;overflow:hidden;border-radius:99px}
+.scan-lines i{display:block;width:35%;height:100%;background:var(--red);animation:scan 1.2s infinite ease-in-out}
+@keyframes scan{0%{transform:translateX(-120%)}100%{transform:translateX(320%)}}
+.action-row{display:flex;gap:9px;margin-top:12px}
+.action-row button{flex:1;padding:13px;border-radius:13px;font-weight:700}
+.primary{background:var(--red);color:white}.secondary{background:#eee8e1}
+.large-action{width:100%;padding:15px;border-radius:14px;background:var(--red);color:#fff;font-weight:700;font-size:16px;margin-top:14px}
+.food-tags{display:flex;gap:7px;flex-wrap:wrap}
+.edit-tag{padding:8px 11px;border-radius:10px;background:#f1ece6;border:1px solid var(--line);font-size:12px}
+.edit-tag.active{background:var(--red-soft);border-color:#e5c1ba;color:var(--red)}
+.result-card{padding:17px;transform-origin:top;animation:flip .6s ease}
+@keyframes flip{0%{transform:perspective(700px) rotateX(-72deg);opacity:.2}100%{transform:perspective(700px) rotateX(0);opacity:1}}
+.product{display:flex;gap:12px;padding:13px;margin-top:10px}
+.product-img{width:75px;height:75px;border-radius:14px;background:#e9e1d5;display:grid;place-items:center;font-size:34px}
+.product-main{flex:1}
+.product-price{font-weight:700;color:var(--red);margin-top:5px}
+.reason{font-size:12px;color:#6c645e;line-height:1.5;margin-top:4px}
+.badge{display:inline-block;padding:3px 7px;border-radius:6px;background:#edf0e9;color:#58705d;font-size:10px;margin-top:5px}
+
+.modal{position:absolute;inset:0;background:rgba(36,28,24,.45);z-index:40;display:none;align-items:flex-end}
+.modal.show{display:flex}
+.sheet{background:var(--paper);width:100%;border-radius:24px 24px 0 0;padding:18px 18px calc(20px + env(safe-area-inset-bottom));max-height:82%;overflow:auto}
+.sheet-handle{width:42px;height:4px;border-radius:9px;background:#d5cdc5;margin:0 auto 15px}
+.input{width:100%;border:1px solid var(--line);border-radius:13px;padding:12px;background:#fbf8f4;resize:none}
+.voice{width:100%;padding:12px;border-radius:13px;background:#f1e6e2;color:var(--red);font-weight:700;margin-top:9px}
+.helper{font-size:11px;color:var(--muted);margin-top:7px;line-height:1.5}
+
+.report-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.report-stat{padding:12px;background:var(--paper);border:1px solid var(--line);border-radius:14px}
+.report-stat strong{display:block;font-size:20px}.report-stat span{font-size:10px;color:var(--muted)}
+.tabs{display:flex;background:#ebe5de;border-radius:12px;padding:3px}.tab{flex:1;padding:8px;border-radius:9px;font-size:12px}.tab.active{background:#fff;color:var(--red);font-weight:700}
+.chart{background:var(--paper);border:1px solid var(--line);border-radius:17px;padding:13px}
+.chart svg{width:100%;height:155px;display:block}
+.spectrum{padding:14px}.spectrum-bar{height:17px;border-radius:99px;background:linear-gradient(90deg,#6f8e88,#a9ad75,#d49c65,#a85c52);position:relative}
+.spectrum-marker{position:absolute;top:-6px;width:29px;height:29px;border-radius:50%;background:#fff;border:3px solid var(--red);transform:translateX(-50%);box-shadow:0 2px 7px #0002}
+.spectrum-labels{display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-top:8px}
+.const-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:12px}
+.const{font-size:11px;text-align:center;padding:8px 4px;background:#f4eee8;border-radius:9px}.const b{display:block;color:#5e5751}
+.const.active{background:var(--red-soft);color:var(--red)}
+.risk-card{padding:14px;margin-top:10px}.risk-card strong{font-size:14px}.risk-card p{font-size:12px;color:var(--muted);line-height:1.55;margin-top:5px}
+.shop-tabs{display:flex;gap:7px;overflow:auto;margin:14px 0}.shop-tab{white-space:nowrap;padding:8px 11px;background:#eee8e1;border-radius:999px;font-size:12px}.shop-tab.active{background:var(--red);color:#fff}
+.profile-head{display:flex;gap:13px;align-items:center;padding:15px}.avatar{width:55px;height:55px;border-radius:50%;background:#ead8cd;display:grid;place-items:center;font-size:25px}
+.profile-card{padding:14px}.settings-row{display:flex;justify-content:space-between;padding:14px 2px;border-bottom:1px solid var(--line);font-size:13px}.settings-row:last-child{border-bottom:0}
+.quiz{padding:17px}.question{font-family:"Noto Serif TC",serif;font-size:19px;line-height:1.45;margin-bottom:13px}.answers{display:grid;gap:8px}.answer{padding:12px;border-radius:12px;background:#f1ece6;text-align:left}.answer.selected{background:var(--red-soft);color:var(--red);font-weight:700}
+
+.toast{position:absolute;left:50%;bottom:90px;transform:translateX(-50%);background:#2e2926;color:#fff;padding:10px 14px;border-radius:12px;font-size:12px;z-index:70;opacity:0;pointer-events:none;transition:.2s;white-space:nowrap}.toast.show{opacity:1}
+.share-card{padding:0;overflow:hidden}.share-image{height:240px;background:linear-gradient(145deg,#c56d4e,#7e352a);display:grid;place-items:center;font-size:100px;position:relative}.watermark{position:absolute;right:12px;bottom:10px;color:#fff;font-size:12px;opacity:.8}.share-caption{padding:15px;font-family:"Noto Serif TC",serif;font-size:21px;line-height:1.5}.seal{position:absolute;right:16px;top:15px;border:2px solid #fff;color:#fff;padding:5px 7px;border-radius:6px;transform:rotate(-8deg);font-size:12px;font-weight:700}
+
+@media(max-width:360px){
+  .screen{padding-left:14px;padding-right:14px}
+  .camera{width:175px;height:175px}.camera strong{font-size:26px}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition:none!important}
+}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+<main class="screen">
+
+<section class="view active" id="home">
+  <div class="topline"><span>2026年9月28日 · 星期一</span><span>今日脈案</span></div>
+  <h1>今日，想食啲咩？</h1>
+  <p class="small">唔使戒口，先睇下身體點講。</p>
+
+  <div class="hero-note"><b id="focusSummary">最近關注：胃部</b><br>你今日飲食呈現偏熱氣傾向，晚餐可以清淡少辣。</div>
+
+  <div class="section">
+    <div class="section-head"><h2>今日想特別照顧咩？</h2><span class="small">可隨時更改</span></div>
+    <div class="focus-row" id="focusRow">
+      <button class="focus-chip active" data-focus="胃部">胃部 · 頂住</button>
+      <button class="focus-chip" data-focus="排便">排便 · 唔順</button>
+      <button class="focus-chip" data-focus="睡眠">睡眠 · 瞓唔好</button>
+      <button class="focus-chip" data-focus="疲勞">疲勞 · 好攰</button>
+      <button class="focus-chip" data-focus="皮膚">皮膚 · 敏感</button>
+      <button class="focus-chip" data-focus="頭部">頭部 · 唔舒服</button>
+      <button class="focus-chip" data-focus="暫不設定">暫不設定</button>
+    </div>
+  </div>
+
+  <div class="camera-wrap">
+    <button class="camera" id="cameraBtn" aria-label="拍照分析食物">
+      <div class="icon">📷</div><strong>照食</strong><span>拍張相，先睇下</span>
+    </button>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><h2>今日已記錄</h2><span class="small">約 1,420 kcal</span></div>
+    <div class="card meal-card">
+      <div class="food-thumb">🍜</div>
+      <div class="meal-info">
+        <div class="meal-title">牛肉湯麵</div>
+        <div class="tags"><span class="tag hot">偏熱</span><span class="tag">約 560 kcal</span></div>
+        <div class="meal-desc">食後感：胃有少少脹。下次可少辣、少湯。</div>
+      </div>
+    </div>
+    <div class="card meal-card" style="margin-top:8px">
+      <div class="food-thumb" style="background:linear-gradient(145deg,#d9dba4,#719267)">🥗</div>
+      <div class="meal-info">
+        <div class="meal-title">雞胸沙律</div>
+        <div class="tags"><span class="tag cool">偏平</span><span class="tag">約 390 kcal</span></div>
+        <div class="meal-desc">食後感：幾舒服。今日蛋白質攝取唔錯。</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><h2>本週照食印</h2><span class="small">4 / 7 日</span></div>
+    <div class="card" style="padding:14px"><div class="stamps">
+      <div class="stamp">照<br>食</div><div class="stamp">照<br>食</div><div class="stamp">照<br>食</div><div class="stamp">照<br>食</div>
+      <div class="stamp empty">5</div><div class="stamp empty">6</div><div class="stamp empty">7</div>
+    </div><p class="small" style="margin-top:10px">連續記錄 7 日，可解鎖新修圖邊框。</p></div>
+  </div>
+  <div class="disclaimer">以上分析僅供日常飲食參考，不構成醫療診斷或治療建議。</div>
+</section>
+
+<section class="view" id="scan">
+  <button class="back" data-go="home">‹ 返回今日</button>
+  <h1>AI 正在睇緊</h1>
+  <div class="food-visual">🍗</div>
+  <div class="card analysis-card">
+    <div class="pulse-line"></div>
+    <div class="ai-status"><span class="dot"></span><b id="scanStatus">正在辨識食物……</b></div>
+    <div class="scan-lines"><i></i></div>
+    <div id="scanSteps" style="margin-top:13px;font-size:12px;line-height:2;color:#77706a">
+      <div>○ 辨識食材</div><div>○ 分析烹調方式</div><div>○ 計算營養及卡路里</div><div>○ 對照你最近關注方向</div>
+    </div>
+  </div>
+  <button class="large-action" id="finishScan" style="display:none">查看 AI 分析</button>
+  <div class="disclaimer">AI 分析屬日常飲食參考，並非醫療診斷。</div>
+</section>
+
+<section class="view" id="result">
+  <button class="back" data-go="home">‹ 返回</button>
+  <h1>今餐，AI 幫你睇過喇</h1>
+  <div class="card result-card">
+    <div class="pulse-line"></div>
+    <div class="section-head"><h2>食材辨識</h2><button class="mini-btn" id="editBtn">辨識錯咗？</button></div>
+    <div class="food-tags">
+      <button class="edit-tag active" data-tag="燒雞">燒雞</button>
+      <button class="edit-tag active" data-tag="雞腿">雞腿</button>
+      <button class="edit-tag active" data-tag="燒烤">燒烤</button>
+    </div>
+    <div class="section"><h2>屬性判斷</h2>
+      <div class="split" style="margin-top:9px">
+        <div class="metric"><span>寒熱</span><b style="color:#a84b3d">偏熱</b></div>
+        <div class="metric"><span>估算熱量</span><b>680 kcal</b></div>
+        <div class="metric"><span>蛋白質</span><b>42 g</b></div>
+        <div class="metric"><span>脂肪</span><b>38 g</b></div>
+      </div>
+    </div>
+    <div class="section"><h2>體質建議</h2>
+      <p style="font-size:13px;line-height:1.7;margin-top:7px">你近期飲食呈現偏熱氣傾向，而今餐屬偏熱、油脂較高。想食可以照食，但建議少皮、少醬，配水及清淡蔬菜。</p>
+    </div>
+    <div class="section"><h2>針對「胃部 · 頂住」</h2>
+      <p style="font-size:13px;line-height:1.7;margin-top:7px">呢餐刺激性較高。如果最近食完容易覺得脹或灼熱，可以考慮減辣、減油，亦避免太夜食。</p>
+    </div>
+  </div>
+  <button class="large-action" id="confirmMeal">照食！記錄今餐</button>
+  <div class="disclaimer">以上內容只作日常飲食參考，不代表診斷或治療任何疾病。</div>
+</section>
+
+<section class="view" id="share">
+  <button class="back" data-go="result">‹ 返回分析</button>
+  <h1>今餐照食，記低先。</h1>
+  <div class="card share-card">
+    <div class="share-image">🍗<span class="seal">照食</span><span class="watermark">ZHAO CHI</span></div>
+    <div class="share-caption">燒雞好味！<br>但今日有少少熱氣。</div>
+  </div>
+  <button class="large-action" id="shareBtn">分享呢張照食卡</button>
+  <div class="disclaimer">修圖文案只描述日常體感，不代表醫療功效。</div>
+</section>
+
+<section class="view" id="report">
+  <div class="topline"><span>你的飲食紀錄</span><span>最近更新：今日</span></div>
+  <h1>Report</h1>
+  <div class="tabs"><button class="tab active" data-period="week">本週</button><button class="tab" data-period="month">本月</button></div>
+  <div class="report-grid section">
+    <div class="report-stat"><strong id="avgKcal">1,560</strong><span>平均 kcal / 日</span></div>
+    <div class="report-stat"><strong>78 g</strong><span>平均蛋白質</span></div>
+    <div class="report-stat"><strong>4 / 7</strong><span>記錄完成</span></div>
+  </div>
+  <div class="section"><div class="section-head"><h2>體質光譜</h2><span class="small">近期飲食傾向</span></div>
+    <div class="card spectrum">
+      <p style="font-size:13px;line-height:1.6;margin-bottom:12px">你近期較接近「平和 → 濕熱」區域，並非固定標籤，會隨飲食及生活狀態變化。</p>
+      <div class="spectrum-bar"><div class="spectrum-marker" style="left:68%"></div></div>
+      <div class="spectrum-labels"><span>偏寒</span><span>平和</span><span>偏熱</span></div>
+      <div class="const-grid">
+        <div class="const"><b>平和</b>穩定</div><div class="const"><b>氣虛</b>偏弱</div><div class="const"><b>陽虛</b>偏冷</div>
+        <div class="const"><b>陰虛</b>偏乾</div><div class="const"><b>痰濕</b>偏濕</div><div class="const active"><b>濕熱</b>近期較高</div>
+        <div class="const"><b>血瘀</b>循環</div><div class="const"><b>氣鬱</b>情緒</div><div class="const"><b>特稟</b>敏感</div>
+      </div>
+    </div>
+  </div>
+  <div class="section"><div class="section-head"><h2>熱量概覽</h2><span class="small">一般飲食估算</span></div>
+    <div class="chart" aria-label="本週每日卡路里：星期一1560、星期二1480、星期三1710、星期四1430、星期五1600、星期六未記錄、星期日未記錄">
+      <svg viewBox="0 0 340 155" role="img">
+        <line x1="25" y1="130" x2="330" y2="130" stroke="#ddd4cb"/>
+        <line x1="25" y1="25" x2="25" y2="130" stroke="#ddd4cb"/>
+        <polyline points="30,92 80,102 130,62 180,112 230,83" fill="none" stroke="#a83d32" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="30" cy="92" r="4" fill="#a83d32"/><circle cx="80" cy="102" r="4" fill="#a83d32"/><circle cx="130" cy="62" r="4" fill="#a83d32"/><circle cx="180" cy="112" r="4" fill="#a83d32"/><circle cx="230" cy="83" r="4" fill="#a83d32"/>
+        <text x="24" y="148" font-size="10">一</text><text x="75" y="148" font-size="10">二</text><text x="125" y="148" font-size="10">三</text><text x="175" y="148" font-size="10">四</text><text x="225" y="148" font-size="10">五</text>
+      </svg>
+      <p class="small">文字摘要：週三最高約 1,710 kcal；週四最低約 1,430 kcal。</p>
+    </div>
+  </div>
+  <div class="section"><div class="section-head"><h2>最近常出現</h2></div>
+    <div class="card risk-card"><strong>🌶 辣味食物</strong><p>最近 7 日出現 4 次。你回報食後胃部脹滿的餐次中，有 3 次含辣味。</p><button class="mini-btn" data-go="shop">去照食補給睇下</button></div>
+    <div class="card risk-card"><strong>🍗 油炸／燒烤</strong><p>出現 3 次。可嘗試減少油脂及醬汁，觀察食後感有冇變化。</p><button class="mini-btn" data-go="shop">睇日常補給</button></div>
+  </div>
+  <div class="section"><div class="section-head"><h2>你的飲食反應</h2><span class="small">12 次記錄</span></div>
+    <div class="card" style="padding:14px">
+      <div class="risk-card" style="margin:0;background:#f5efe9"><strong>🌶 辣食</strong><p>較常與「胃脹／灼熱」同時出現</p></div>
+      <div class="risk-card" style="margin:8px 0 0;background:#f5efe9"><strong>☕ 咖啡</strong><p>較常與「夜晚難入睡」同時出現</p></div>
+      <p class="small" style="margin-top:10px">以上只反映你的歷史回報，不代表食物一定會造成相關反應。</p>
+    </div>
+  </div>
+  <div class="disclaimer">本報告僅供日常參考，不構成醫療診斷或治療建議，如有持續不適，請諮詢註冊中醫師或醫生。</div>
+</section>
+
+<section class="view" id="shop">
+  <div class="topline"><span>照食補給</span><span>食品定位</span></div>
+  <h1>照食補給</h1>
+  <p class="small">唔係叫你戒口，而係按你最近狀態揀啱日常補給。</p>
+  <div class="shop-tabs"><button class="shop-tab active">為你推薦</button><button class="shop-tab">體質相應</button><button class="shop-tab">湯包</button><button class="shop-tab">保健食品</button></div>
+  <div class="card product">
+    <div class="product-img">🥣</div><div class="product-main">
+      <h3>清潤日常湯包</h3><span class="badge">食品 · 配方由執業中醫師設計</span>
+      <p class="reason">為何適合您：近期飲食偏熱氣，可作日常清潤搭配。</p><div class="product-price">HK$168 / 5包</div>
+    </div>
+  </div>
+  <div class="card product">
+    <div class="product-img">🌿</div><div class="product-main">
+      <h3>輕養日常茶包</h3><span class="badge">食品 · 日常養生</span>
+      <p class="reason">為何適合您：最近外食較多，適合加入較清淡的日常飲食安排。</p><div class="product-price">HK$128 / 10包</div>
+    </div>
+  </div>
+  <div class="card product">
+    <div class="product-img">🍵</div><div class="product-main">
+      <h3>晚間舒心飲</h3><span class="badge">食品 · 體質相應</span>
+      <p class="reason">為何適合您：最近記錄顯示晚間較容易難入睡，適合作為日常飲食搭配。</p><div class="product-price">HK$148 / 10包</div>
+    </div>
+  </div>
+  <div class="disclaimer">產品屬食品及日常養生用途，不作疾病治療或醫療聲稱。</div>
+</section>
+
+<section class="view" id="me">
+  <div class="topline"><span>我的照食</span><span>Demo</span></div>
+  <h1>我的</h1>
+  <div class="card profile-head"><div class="avatar">🙂</div><div><h3>Leo</h3><p class="small">最近關注：胃部 · 頂住</p></div></div>
+  <div class="section"><div class="section-head"><h2>個人設定</h2></div>
+    <div class="card profile-card">
+      <button class="settings-row" id="quizBtn"><span>重新做體質問卷</span><span>›</span></button>
+      <button class="settings-row" id="privacyBtn"><span>私隱與同意設定</span><span>›</span></button>
+      <button class="settings-row"><span>我的食物反應資料</span><span>12 次 ›</span></button>
+    </div>
+  </div>
+  <div class="section"><div class="section-head"><h2>關於照食</h2></div>
+    <div class="card profile-card"><p style="font-size:13px;line-height:1.7">照食唔係叫你戒口。影低你想食嘅食物，再配合你當下關注方向，幫你用更簡單的方法了解自己每日食緊乜。</p></div>
+  </div>
+  <div class="disclaimer">照食提供日常飲食及健康管理參考資訊，不構成醫療診斷或治療建議。</div>
+</section>
+
+</main>
+
+<nav class="bottom-nav" aria-label="主要導航">
+  <button class="nav-item active" data-nav="home"><span class="nav-icon">⌂</span>首頁</button>
+  <button class="nav-item" data-nav="report"><span class="nav-icon">◔</span>Report</button>
+  <button class="nav-item" data-nav="shop"><span class="nav-icon">▢</span>照食補給</button>
+  <button class="nav-item" data-nav="me"><span class="nav-icon">○</span>我的</button>
+</nav>
+
+<div class="modal" id="editModal">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <h2>邊度辨識錯咗？</h2>
+    <p class="small" style="margin:6px 0 12px">你可以打字，或者直接講俾我聽。</p>
+    <textarea class="input" id="editInput" rows="3" placeholder="例如：唔係燒雞，係叉燒飯，而且有少辣。"></textarea>
+    <button class="voice" id="voiceBtn">🎙️ 按住／點一下，用聲音修改</button>
+    <p class="helper" id="voiceStatus">Demo：瀏覽器支援語音輸入時會直接填入文字；否則可以使用上面的文字框。</p>
+    <button class="large-action" id="reanalyze">重新分析</button>
+    <button class="large-action secondary" id="closeModal">取消</button>
+  </div>
+</div>
+
+<div class="modal" id="quizModal">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <div id="quizContent"></div>
+  </div>
+</div>
+<div class="toast" id="toast">已記錄</div>
+
+<script>
+(function(){
+  const views=["home","scan","result","share","report","shop","me"];
+  let currentFocus="胃部";
+  let scanTimer=null;
+
+  function showView(id){
+    views.forEach(v=>document.getElementById(v).classList.toggle("active",v===id));
+    document.querySelectorAll(".nav-item").forEach(b=>b.classList.toggle("active",b.dataset.nav===id));
+    document.querySelector(".screen").scrollTop=0;
+  }
+  function toast(msg){
+    const t=document.getElementById("toast"); t.textContent=msg; t.classList.add("show");
+    setTimeout(()=>t.classList.remove("show"),1800);
+  }
+  document.querySelectorAll("[data-go]").forEach(b=>b.addEventListener("click",()=>showView(b.dataset.go)));
+  document.querySelectorAll(".nav-item").forEach(b=>b.addEventListener("click",()=>showView(b.dataset.nav)));
+
+  document.querySelectorAll(".focus-chip").forEach(b=>{
+    b.addEventListener("click",()=>{
+      document.querySelectorAll(".focus-chip").forEach(x=>x.classList.remove("active"));
+      b.classList.add("active"); currentFocus=b.dataset.focus;
+      document.getElementById("focusSummary").textContent="最近關注："+currentFocus;
+      toast("已切換："+currentFocus);
+    });
+  });
+
+  document.getElementById("cameraBtn").addEventListener("click",()=>{
+    showView("scan");
+    const steps=document.querySelectorAll("#scanSteps div");
+    steps.forEach((s,i)=>{s.textContent="○ "+["辨識食材","分析烹調方式","計算營養及卡路里","對照你最近關注方向"][i];});
+    document.getElementById("finishScan").style.display="none";
+    let n=0;
+    clearInterval(scanTimer);
+    scanTimer=setInterval(()=>{
+      if(n<steps.length){
+        steps[n].textContent="✓ "+["辨識食材","分析烹調方式","計算營養及卡路里","對照你最近關注方向"][n];
+        steps[n].style.color="#a83d32"; n++;
+      }else{
+        clearInterval(scanTimer);
+        document.getElementById("scanStatus").textContent="分析完成";
+        document.getElementById("finishScan").style.display="block";
+      }
+    },650);
+  });
+  document.getElementById("finishScan").addEventListener("click",()=>showView("result"));
+
+  document.getElementById("editBtn").addEventListener("click",()=>document.getElementById("editModal").classList.add("show"));
+  document.getElementById("closeModal").addEventListener("click",()=>document.getElementById("editModal").classList.remove("show"));
+  document.querySelectorAll(".edit-tag").forEach(b=>b.addEventListener("click",()=>{
+    b.classList.toggle("active");
+    toast(b.classList.contains("active")?"已加入「"+b.dataset.tag+"」":"已移除「"+b.dataset.tag+"」");
+  }));
+  document.getElementById("reanalyze").addEventListener("click",()=>{
+    const val=document.getElementById("editInput").value.trim();
+    document.getElementById("editModal").classList.remove("show");
+    toast(val?"AI 已根據你的修改重新分析":"已重新分析");
+    setTimeout(()=>showView("result"),350);
+  });
+
+  const SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;
+  document.getElementById("voiceBtn").addEventListener("click",()=>{
+    if(!SpeechRecognition){document.getElementById("voiceStatus").textContent="此瀏覽器未提供語音辨識，請直接打字修改。";return}
+    const r=new SpeechRecognition(); r.lang="zh-HK"; r.interimResults=false;
+    document.getElementById("voiceStatus").textContent="正在聽……請講你想修改嘅地方。";
+    r.onresult=e=>{document.getElementById("editInput").value=e.results[0][0].transcript;document.getElementById("voiceStatus").textContent="已收到：「"+e.results[0][0].transcript+"」";};
+    r.onerror=()=>document.getElementById("voiceStatus").textContent="語音輸入未完成，可以再試一次或直接打字。";
+    r.start();
+  });
+
+  document.getElementById("confirmMeal").addEventListener("click",()=>{
+    document.getElementById("confirmMeal").textContent="✓ 已蓋印";
+    setTimeout(()=>showView("share"),350);
+  });
+  document.getElementById("shareBtn").addEventListener("click",()=>toast("Demo：分享卡已準備好"));
+
+  document.querySelectorAll(".tabs .tab").forEach(b=>b.addEventListener("click",()=>{
+    document.querySelectorAll(".tabs .tab").forEach(x=>x.classList.remove("active"));b.classList.add("active");
+    document.getElementById("avgKcal").textContent=b.dataset.period==="month"?"1,590":"1,560";
+    toast(b.dataset.period==="month"?"已切換本月":"已切換本週");
+  }));
+  document.querySelectorAll(".shop-tab").forEach(b=>b.addEventListener("click",()=>{
+    document.querySelectorAll(".shop-tab").forEach(x=>x.classList.remove("active"));b.classList.add("active");
+  }));
+
+  const quizModal=document.getElementById("quizModal"), quizContent=document.getElementById("quizContent");
+  const questions=[
+    ["最近食完飯，你比較常有？",["幾舒服","容易脹","覺得熱／口乾","容易攰"]],
+    ["平時你比較鍾意？",["凍飲／生冷","正常溫度","熱飲／熱湯","都差不多"]],
+    ["最近作息感覺？",["精神穩定","容易夜瞓","比較難入睡","日間容易攰"]]
+  ];
+  let qi=0, answers=[];
+  function renderQuiz(){
+    const q=questions[qi];
+    quizContent.innerHTML='<div class="topline"><span>體質問卷 · '+(qi+1)+' / '+questions.length+'</span><button class="mini-btn" id="quizClose">關閉</button></div><div class="quiz"><div class="question">'+q[0]+'</div><div class="answers">'+q[1].map((x,i)=>'<button class="answer" data-i="'+i+'">'+x+'</button>').join("")+'</div></div>';
+    quizContent.querySelectorAll(".answer").forEach(a=>a.addEventListener("click",()=>{
+      answers.push(a.textContent);qi++;
+      if(qi<questions.length)renderQuiz();
+      else{quizContent.innerHTML='<div class="quiz"><h2>完成喇</h2><p style="margin-top:9px;line-height:1.7;font-size:13px">Demo 已根據你的回答更新飲食參考。呢個結果會隨之後嘅飲食記錄繼續調整。</p><button class="large-action" id="quizDone">完成</button></div>';document.getElementById("quizDone").onclick=()=>{quizModal.classList.remove("show");qi=0;answers=[];toast("體質參考已更新")}}
+    }));
+    document.getElementById("quizClose").onclick=()=>quizModal.classList.remove("show");
+  }
+  document.getElementById("quizBtn").addEventListener("click",()=>{qi=0;answers=[];quizModal.classList.add("show");renderQuiz()});
+  document.getElementById("privacyBtn").addEventListener("click",()=>toast("Demo：私隱與同意設定"));
+
+  // 防止常見的雙擊縮放與 pinch zoom；保留正常上下滾動。
+  let lastTouch=0;
+  document.addEventListener("touchend",e=>{
+    const now=Date.now();
+    if(now-lastTouch<280)e.preventDefault();
+    lastTouch=now;
+  },{passive:false});
+  document.addEventListener("gesturestart",e=>e.preventDefault(),{passive:false});
+  document.addEventListener("gesturechange",e=>e.preventDefault(),{passive:false});
+  document.addEventListener("gestureend",e=>e.preventDefault(),{passive:false});
+})();
+</script>
+</body>
+</html>
