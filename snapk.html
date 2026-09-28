@@ -1,0 +1,2597 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#F7F4EE">
+<title>照食｜AI 中醫體質飲食管理</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&family=Noto+Serif+TC:wght@500;600;700&display=swap" rel="stylesheet">
+
+<style>
+:root {
+    --bg: #F7F4EE;
+    --paper: #FFFDF8;
+    --card: #FFFFFF;
+    --ink: #24231F;
+    --muted: #858078;
+    --line: #E7E1D7;
+    --red: #A33A32;
+    --red-dark: #842D28;
+    --red-light: #F3E4DF;
+    --gold: #B18A4A;
+    --green: #5D735D;
+    --blue: #60758A;
+    --warm: #B75A35;
+    --cool: #607D91;
+    --shadow: 0 10px 30px rgba(54,45,34,.07);
+    --radius: 20px;
+}
+
+* {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
+html {
+    background: #DDD8CF;
+}
+
+body {
+    margin: 0;
+    min-width: 320px;
+    min-height: 100vh;
+    background:
+        radial-gradient(circle at 50% 0%, rgba(255,255,255,.7), transparent 35%),
+        #DDD8CF;
+    color: var(--ink);
+    font-family: "Noto Sans TC", sans-serif;
+}
+
+button,
+input {
+    font: inherit;
+}
+
+button {
+    border: 0;
+    cursor: pointer;
+}
+
+button:focus-visible,
+input:focus-visible {
+    outline: 3px solid rgba(163,58,50,.28);
+    outline-offset: 3px;
+}
+
+.app-shell {
+    width: min(100%, 430px);
+    min-height: 100vh;
+    margin: auto;
+    background: var(--bg);
+    position: relative;
+    overflow: hidden;
+}
+
+@media (min-width: 600px) {
+    body {
+        padding: 28px 0;
+    }
+
+    .app-shell {
+        min-height: 844px;
+        height: calc(100vh - 56px);
+        max-height: 920px;
+        border-radius: 34px;
+        box-shadow: 0 25px 80px rgba(40,35,28,.18);
+        border: 8px solid #292824;
+    }
+}
+
+/* ---------- App Header ---------- */
+
+.top-safe {
+    height: env(safe-area-inset-top);
+    min-height: 8px;
+}
+
+.header {
+    padding: 14px 20px 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+}
+
+.brand-mark {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: var(--red);
+    color: white;
+    display: grid;
+    place-items: center;
+    font-family: "Noto Serif TC", serif;
+    font-size: 16px;
+}
+
+.brand-name {
+    font-family: "Noto Serif TC", serif;
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: .08em;
+}
+
+.header-action {
+    width: 38px;
+    height: 38px;
+    background: transparent;
+    color: var(--ink);
+    font-size: 20px;
+}
+
+/* ---------- Screens ---------- */
+
+.screen {
+    display: none;
+    height: calc(100vh - 83px);
+    min-height: 690px;
+    overflow-y: auto;
+    padding-bottom: 105px;
+    scrollbar-width: none;
+}
+
+.screen::-webkit-scrollbar {
+    display: none;
+}
+
+.screen.active {
+    display: block;
+}
+
+@media (min-width: 600px) {
+    .screen {
+        height: calc(100% - 83px);
+    }
+}
+
+/* ---------- Common ---------- */
+
+.page-padding {
+    padding: 10px 20px 0;
+}
+
+.eyebrow {
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: .08em;
+}
+
+.serif {
+    font-family: "Noto Serif TC", serif;
+}
+
+.section-title {
+    font-family: "Noto Serif TC", serif;
+    font-size: 21px;
+    font-weight: 600;
+    margin: 0;
+}
+
+.section-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 24px 0 12px;
+}
+
+.text-button {
+    color: var(--red);
+    background: transparent;
+    font-size: 13px;
+    padding: 6px;
+}
+
+.card {
+    background: var(--card);
+    border: 1px solid rgba(80,68,50,.08);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+}
+
+.disclaimer {
+    margin: 18px 20px 10px;
+    color: #777168;
+    font-size: 10.5px;
+    line-height: 1.65;
+}
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 8px;
+    border-radius: 999px;
+    font-size: 11px;
+    line-height: 1;
+    white-space: nowrap;
+}
+
+.badge-warm {
+    color: #94412C;
+    background: #F5E4DC;
+}
+
+.badge-cool {
+    color: #526E80;
+    background: #E5EDF1;
+}
+
+.badge-neutral {
+    color: #6D665D;
+    background: #EEEAE2;
+}
+
+.badge-food {
+    color: #59634D;
+    background: #E9EEE4;
+}
+
+.chip-row {
+    display: flex;
+    gap: 7px;
+    flex-wrap: wrap;
+}
+
+.chip {
+    padding: 7px 11px;
+    border: 1px solid var(--line);
+    background: #fff;
+    border-radius: 999px;
+    font-size: 12px;
+    color: #666057;
+}
+
+.chip.active {
+    border-color: var(--red);
+    color: var(--red);
+    background: var(--red-light);
+}
+
+/* ---------- Home ---------- */
+
+.today-line {
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+    margin-top: 8px;
+}
+
+.today-date {
+    font-size: 13px;
+    color: var(--muted);
+}
+
+.heat-status {
+    font-family: "Noto Serif TC", serif;
+    font-size: 17px;
+    margin-top: 4px;
+}
+
+.home-hero {
+    min-height: 350px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.camera-wrap {
+    position: relative;
+    width: 190px;
+    height: 190px;
+    display: grid;
+    place-items: center;
+}
+
+.camera-ring {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    border: 1px solid #D8CDC0;
+}
+
+.camera-ring::after {
+    content: "";
+    position: absolute;
+    inset: 12px;
+    border-radius: 50%;
+    border: 1px dashed #D7C9B8;
+}
+
+.camera-button {
+    width: 142px;
+    height: 142px;
+    border-radius: 50%;
+    background: var(--red);
+    color: white;
+    box-shadow:
+        0 14px 30px rgba(163,58,50,.22),
+        inset 0 0 0 8px rgba(255,255,255,.08);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: transform .15s ease, background .15s ease;
+}
+
+.camera-button:hover {
+    transform: translateY(-2px);
+    background: var(--red-dark);
+}
+
+.camera-icon {
+    font-size: 32px;
+    margin-bottom: 5px;
+}
+
+.camera-text {
+    font-family: "Noto Serif TC", serif;
+    font-size: 18px;
+}
+
+.camera-sub {
+    font-size: 11px;
+    opacity: .8;
+    margin-top: 3px;
+}
+
+.hero-copy {
+    text-align: center;
+    margin-top: 15px;
+}
+
+.hero-copy strong {
+    font-family: "Noto Serif TC", serif;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.hero-copy p {
+    margin: 5px 0 0;
+    font-size: 12px;
+    color: var(--muted);
+}
+
+/* ---------- Meal cards ---------- */
+
+.meal-card {
+    display: grid;
+    grid-template-columns: 76px 1fr;
+    gap: 12px;
+    padding: 12px;
+    margin-bottom: 10px;
+}
+
+.food-thumb {
+    width: 76px;
+    height: 76px;
+    border-radius: 15px;
+    background: linear-gradient(145deg,#EADCC8,#F5EEE3);
+    display: grid;
+    place-items: center;
+    font-size: 42px;
+}
+
+.meal-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.meal-name {
+    font-weight: 600;
+    font-size: 15px;
+}
+
+.meal-time {
+    font-size: 10px;
+    color: var(--muted);
+}
+
+.meal-advice {
+    margin-top: 9px;
+    font-size: 12px;
+    color: #625D55;
+    line-height: 1.5;
+}
+
+/* ---------- Stamps ---------- */
+
+.stamp-card {
+    padding: 16px;
+}
+
+.stamp-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.stamp-count {
+    color: var(--red);
+    font-family: "Noto Serif TC", serif;
+    font-size: 17px;
+}
+
+.stamps {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 16px;
+}
+
+.stamp-day {
+    text-align: center;
+    font-size: 10px;
+    color: var(--muted);
+}
+
+.stamp {
+    width: 36px;
+    height: 36px;
+    border: 1px solid #D5CABE;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    margin-bottom: 5px;
+    color: #C2B9AE;
+    font-family: "Noto Serif TC", serif;
+}
+
+.stamp.done {
+    border-color: var(--red);
+    background: var(--red);
+    color: white;
+    transform: rotate(-8deg);
+}
+
+.stamp.today {
+    border-color: var(--red);
+    color: var(--red);
+}
+
+/* ---------- Recognition ---------- */
+
+.recognition {
+    padding: 14px 20px 120px;
+}
+
+.back-button {
+    background: transparent;
+    color: var(--ink);
+    padding: 5px 0;
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+.photo-preview {
+    height: 230px;
+    border-radius: 22px;
+    background:
+        radial-gradient(circle at 30% 30%, rgba(255,255,255,.75), transparent 30%),
+        linear-gradient(145deg,#E4D0B8,#C79B68);
+    display: grid;
+    place-items: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.food-art {
+    font-size: 120px;
+    filter: drop-shadow(0 16px 12px rgba(65,43,25,.18));
+}
+
+.photo-corner {
+    position: absolute;
+    left: 15px;
+    top: 15px;
+    color: white;
+    background: rgba(40,30,20,.32);
+    padding: 5px 9px;
+    border-radius: 999px;
+    font-size: 10px;
+}
+
+.analysis-card {
+    background: var(--card);
+    margin-top: -22px;
+    position: relative;
+    border-radius: 22px;
+    padding: 20px;
+    box-shadow: var(--shadow);
+    border-top: 3px solid var(--red);
+}
+
+.analysis-section {
+    padding: 13px 0;
+    border-bottom: 1px solid #EEEAE3;
+}
+
+.analysis-section:last-child {
+    border-bottom: 0;
+}
+
+.analysis-label {
+    color: var(--muted);
+    font-size: 11px;
+    letter-spacing: .05em;
+    margin-bottom: 8px;
+}
+
+.analysis-food {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.analysis-food-name {
+    font-family: "Noto Serif TC", serif;
+    font-size: 22px;
+}
+
+.nutrition {
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    gap: 7px;
+}
+
+.nutrition-item {
+    padding: 9px 6px;
+    background: #F7F4EE;
+    border-radius: 11px;
+    text-align: center;
+}
+
+.nutrition-value {
+    display: block;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.nutrition-label {
+    display: block;
+    font-size: 9px;
+    color: var(--muted);
+    margin-top: 2px;
+}
+
+.body-advice {
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+.body-advice strong {
+    color: var(--red);
+}
+
+.editable-chip {
+    cursor: pointer;
+}
+
+.recognize-button {
+    width: 100%;
+    height: 58px;
+    margin-top: 18px;
+    border-radius: 17px;
+    color: white;
+    background: var(--red);
+    font-family: "Noto Serif TC", serif;
+    font-size: 17px;
+    box-shadow: 0 10px 22px rgba(163,58,50,.18);
+}
+
+/* ---------- Result ---------- */
+
+.result-page {
+    padding: 14px 20px 120px;
+}
+
+.result-photo {
+    height: 440px;
+    border-radius: 24px;
+    position: relative;
+    overflow: hidden;
+    background:
+        radial-gradient(circle at 50% 35%, rgba(255,255,255,.5), transparent 30%),
+        linear-gradient(145deg,#C89A68,#75492E);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.result-food {
+    font-size: 145px;
+    filter: drop-shadow(0 18px 15px rgba(40,20,10,.3));
+}
+
+.result-overlay {
+    position: absolute;
+    inset: auto 0 0;
+    padding: 60px 22px 22px;
+    color: white;
+    background: linear-gradient(transparent, rgba(31,19,12,.7));
+}
+
+.result-copy {
+    font-family: "Noto Serif TC", serif;
+    font-size: 24px;
+    line-height: 1.45;
+    text-shadow: 0 2px 8px rgba(0,0,0,.3);
+}
+
+.watermark {
+    position: absolute;
+    right: 16px;
+    bottom: 16px;
+    color: rgba(255,255,255,.8);
+    font-family: "Noto Serif TC", serif;
+    font-size: 13px;
+    letter-spacing: .12em;
+}
+
+.result-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 13px;
+}
+
+.result-action {
+    height: 50px;
+    border-radius: 15px;
+    background: white;
+    border: 1px solid var(--line);
+    color: var(--ink);
+}
+
+.result-action.primary {
+    background: var(--red);
+    color: white;
+    border-color: var(--red);
+}
+
+/* ---------- Stamp Animation ---------- */
+
+.stamp-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    background: rgba(30,25,20,.48);
+    display: none;
+    place-items: center;
+    backdrop-filter: blur(4px);
+}
+
+.stamp-overlay.show {
+    display: grid;
+}
+
+.big-stamp {
+    width: 180px;
+    height: 180px;
+    border: 8px solid var(--red);
+    border-radius: 50%;
+    color: var(--red);
+    display: grid;
+    place-items: center;
+    text-align: center;
+    font-family: "Noto Serif TC", serif;
+    font-size: 28px;
+    transform: scale(2.2) rotate(-18deg);
+    opacity: 0;
+}
+
+.stamp-overlay.show .big-stamp {
+    animation: stampDown .48s cubic-bezier(.2,.8,.3,1) forwards;
+}
+
+@keyframes stampDown {
+    0% {
+        transform: scale(2.2) rotate(-18deg);
+        opacity: 0;
+    }
+    55% {
+        transform: scale(.92) rotate(-5deg);
+        opacity: 1;
+    }
+    75% {
+        transform: scale(1.05) rotate(-8deg);
+    }
+    100% {
+        transform: scale(1) rotate(-8deg);
+        opacity: 1;
+    }
+}
+
+/* ---------- Report ---------- */
+
+.report-header {
+    padding: 10px 20px 0;
+}
+
+.period-switch {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    padding: 4px;
+    background: #EAE5DC;
+    border-radius: 13px;
+    margin-top: 15px;
+}
+
+.period-btn {
+    height: 34px;
+    background: transparent;
+    border-radius: 10px;
+    font-size: 12px;
+    color: var(--muted);
+}
+
+.period-btn.active {
+    background: white;
+    color: var(--ink);
+    box-shadow: 0 2px 8px rgba(40,35,28,.06);
+}
+
+.report-card {
+    margin: 13px 20px 0;
+    padding: 17px;
+}
+
+.chart-title {
+    font-family: "Noto Serif TC", serif;
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+
+.chart-wrap {
+    width: 100%;
+    height: 145px;
+}
+
+.chart-summary {
+    font-size: 10px;
+    color: var(--muted);
+    margin-top: 4px;
+    line-height: 1.5;
+}
+
+.offender {
+    display: grid;
+    grid-template-columns: 43px 1fr auto;
+    gap: 11px;
+    align-items: center;
+    padding: 11px 0;
+    border-bottom: 1px solid #EEEAE3;
+}
+
+.offender:last-child {
+    border-bottom: 0;
+}
+
+.offender-icon {
+    width: 43px;
+    height: 43px;
+    border-radius: 13px;
+    background: #F1E6D8;
+    display: grid;
+    place-items: center;
+    font-size: 25px;
+}
+
+.offender-name {
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.offender-desc {
+    font-size: 10px;
+    color: var(--muted);
+    margin-top: 3px;
+}
+
+.shop-link {
+    color: var(--red);
+    background: transparent;
+    font-size: 11px;
+}
+
+.trend-card {
+    padding-bottom: 11px;
+}
+
+/* ---------- Shop ---------- */
+
+.shop-header {
+    padding: 10px 20px;
+}
+
+.shop-hero {
+    padding: 17px;
+    background: #EEE7DA;
+    border-radius: 20px;
+    margin-top: 13px;
+}
+
+.shop-hero-title {
+    font-family: "Noto Serif TC", serif;
+    font-size: 21px;
+}
+
+.shop-hero-copy {
+    font-size: 11px;
+    color: #716A61;
+    line-height: 1.6;
+    margin-top: 5px;
+}
+
+.product-list {
+    padding: 0 20px 20px;
+}
+
+.product-card {
+    padding: 13px;
+    margin-top: 11px;
+}
+
+.product-image {
+    height: 130px;
+    border-radius: 15px;
+    background: linear-gradient(145deg,#EEE2CE,#D5C4A8);
+    display: grid;
+    place-items: center;
+    font-size: 70px;
+}
+
+.product-info {
+    padding-top: 12px;
+}
+
+.product-title {
+    font-family: "Noto Serif TC", serif;
+    font-size: 17px;
+}
+
+.product-reason {
+    color: #69635A;
+    font-size: 11px;
+    margin-top: 5px;
+    line-height: 1.5;
+}
+
+.product-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 12px;
+}
+
+.product-price {
+    font-size: 17px;
+    font-weight: 700;
+}
+
+.add-button {
+    padding: 9px 14px;
+    border-radius: 12px;
+    color: white;
+    background: var(--red);
+    font-size: 11px;
+}
+
+.category-box {
+    padding: 0 20px 20px;
+}
+
+.category-scroll {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    scrollbar-width: none;
+}
+
+.category-scroll::-webkit-scrollbar {
+    display: none;
+}
+
+.category {
+    flex: 0 0 auto;
+    border: 1px solid var(--line);
+    background: white;
+    border-radius: 999px;
+    padding: 8px 14px;
+    font-size: 11px;
+}
+
+/* ---------- Profile ---------- */
+
+.profile {
+    padding: 10px 20px 120px;
+}
+
+.profile-head {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+}
+
+.avatar {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--red-light);
+    color: var(--red);
+    display: grid;
+    place-items: center;
+    font-family: "Noto Serif TC", serif;
+    font-size: 21px;
+}
+
+.profile-name {
+    font-family: "Noto Serif TC", serif;
+    font-size: 20px;
+}
+
+.profile-sub {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 3px;
+}
+
+.spectrum-card {
+    margin-top: 18px;
+    padding: 17px;
+}
+
+.spectrum {
+    position: relative;
+    height: 130px;
+    margin-top: 18px;
+}
+
+.spectrum-line {
+    position: absolute;
+    left: 5px;
+    right: 5px;
+    top: 54px;
+    height: 5px;
+    border-radius: 99px;
+    background: linear-gradient(90deg,
+        #6D8191,
+        #9A9D78,
+        #C49A62,
+        #A9655C,
+        #6E7485
+    );
+}
+
+.spectrum-point {
+    position: absolute;
+    top: 42px;
+    left: 66%;
+    width: 29px;
+    height: 29px;
+    background: white;
+    border: 5px solid var(--red);
+    border-radius: 50%;
+    box-shadow: 0 3px 12px rgba(0,0,0,.12);
+}
+
+.spectrum-labels {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 72px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 9px;
+    color: var(--muted);
+}
+
+.spectrum-note {
+    background: #F7F4EE;
+    padding: 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    line-height: 1.6;
+}
+
+.menu-list {
+    margin-top: 13px;
+}
+
+.menu-item {
+    width: 100%;
+    min-height: 53px;
+    background: white;
+    border-bottom: 1px solid #EEEAE3;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 14px;
+    text-align: left;
+}
+
+.menu-item:first-child {
+    border-radius: 18px 18px 0 0;
+}
+
+.menu-item:last-child {
+    border-radius: 0 0 18px 18px;
+    border-bottom: 0;
+}
+
+.menu-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+}
+
+.menu-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 9px;
+    background: var(--red-light);
+    display: grid;
+    place-items: center;
+    color: var(--red);
+}
+
+.arrow {
+    color: #AAA39A;
+}
+
+/* ---------- Questionnaire ---------- */
+
+.modal {
+    position: fixed;
+    inset: 0;
+    z-index: 90;
+    background: rgba(25,22,18,.45);
+    display: none;
+    align-items: flex-end;
+}
+
+.modal.show {
+    display: flex;
+}
+
+.modal-sheet {
+    width: min(430px,100%);
+    margin: auto;
+    background: var(--paper);
+    border-radius: 28px 28px 0 0;
+    padding: 18px 20px calc(25px + env(safe-area-inset-bottom));
+    max-height: 88vh;
+    overflow-y: auto;
+}
+
+.modal-handle {
+    width: 40px;
+    height: 4px;
+    background: #D8D0C5;
+    border-radius: 99px;
+    margin: 0 auto 17px;
+}
+
+.question-progress {
+    font-size: 10px;
+    color: var(--muted);
+}
+
+.question-title {
+    font-family: "Noto Serif TC", serif;
+    font-size: 22px;
+    margin: 8px 0 16px;
+}
+
+.answer-option {
+    width: 100%;
+    padding: 14px;
+    text-align: left;
+    background: white;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    margin-bottom: 8px;
+}
+
+.answer-option.selected {
+    border-color: var(--red);
+    background: var(--red-light);
+    color: var(--red);
+}
+
+.question-next {
+    width: 100%;
+    height: 50px;
+    border-radius: 15px;
+    color: white;
+    background: var(--red);
+    margin-top: 10px;
+}
+
+/* ---------- Bottom Navigation ---------- */
+
+.bottom-nav {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 50;
+    padding: 8px 10px calc(8px + env(safe-area-inset-bottom));
+    background: rgba(255,253,248,.94);
+    backdrop-filter: blur(18px);
+    border-top: 1px solid rgba(80,68,50,.08);
+    display: grid;
+    grid-template-columns: repeat(4,1fr);
+}
+
+.nav-item {
+    background: transparent;
+    height: 54px;
+    color: #99928A;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 3px;
+    font-size: 9px;
+}
+
+.nav-icon {
+    font-size: 20px;
+    line-height: 1;
+}
+
+.nav-item.active {
+    color: var(--red);
+}
+
+/* ---------- Toast ---------- */
+
+.toast {
+    position: fixed;
+    z-index: 120;
+    left: 50%;
+    bottom: 94px;
+    transform: translateX(-50%) translateY(15px);
+    background: #292621;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 999px;
+    font-size: 11px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .2s, transform .2s;
+    white-space: nowrap;
+}
+
+.toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
+/* ---------- Recognition reveal ---------- */
+
+.reveal {
+    transform-origin: top center;
+    animation: revealCard .45s cubic-bezier(.2,.8,.3,1);
+}
+
+@keyframes revealCard {
+    from {
+        opacity: 0;
+        transform: perspective(700px) rotateX(-12deg) translateY(-8px);
+    }
+    to {
+        opacity: 1;
+        transform: perspective(700px) rotateX(0) translateY(0);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="app-shell">
+
+    <div class="top-safe"></div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="brand">
+            <div class="brand-mark">照</div>
+            <div class="brand-name">照食</div>
+        </div>
+
+        <button class="header-action" aria-label="通知" onclick="showToast('今日已完成 2 餐記錄')">○</button>
+    </header>
+
+    <!-- ================= HOME ================= -->
+
+    <main id="home" class="screen active">
+
+        <div class="page-padding">
+
+            <div class="today-line">
+                <div>
+                    <div class="eyebrow">今日脈案 · 2026年9月28日</div>
+                    <div class="heat-status">今日偏熱氣，晚餐可以清淡啲</div>
+                </div>
+                <div class="today-date">星期一</div>
+            </div>
+
+        </div>
+
+        <section class="home-hero">
+
+            <div class="camera-wrap">
+
+                <div class="camera-ring"></div>
+
+                <button class="camera-button"
+                        aria-label="拍照分析食物"
+                        onclick="startRecognition()">
+
+                    <div class="camera-icon">⌾</div>
+                    <div class="camera-text">照食</div>
+                    <div class="camera-sub">影低你準備食嘅嘢</div>
+
+                </button>
+
+            </div>
+
+            <div class="hero-copy">
+                <strong>照樣食，食得更有數</strong>
+                <p>AI 幫你睇下今日呢餐對體質有咩影響</p>
+            </div>
+
+        </section>
+
+        <div class="page-padding">
+
+            <div class="section-head">
+                <h2 class="section-title">今日已記錄</h2>
+                <button class="text-button" onclick="showToast('今日已記錄 2 餐')">全部 →</button>
+            </div>
+
+            <div class="meal-card card">
+
+                <div class="food-thumb">🍗</div>
+
+                <div>
+                    <div class="meal-top">
+                        <div class="meal-name">脆皮燒雞</div>
+                        <span class="badge badge-warm">偏熱</span>
+                    </div>
+
+                    <div class="meal-time">午餐 · 12:42</div>
+
+                    <div class="meal-advice">
+                        好味，但今餐偏燥熱；下午飲多啲水，晚餐可以揀清爽啲。
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="meal-card card">
+
+                <div class="food-thumb">🥣</div>
+
+                <div>
+                    <div class="meal-top">
+                        <div class="meal-name">魚片粥</div>
+                        <span class="badge badge-neutral">較平</span>
+                    </div>
+
+                    <div class="meal-time">早餐 · 08:21</div>
+
+                    <div class="meal-advice">
+                        整體較溫和，作為早餐幾舒服。
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="section-head">
+                <h2 class="section-title">本週照食印</h2>
+                <span class="stamp-count">4 / 7</span>
+            </div>
+
+            <div class="stamp-card card">
+
+                <div class="stamp-head">
+                    <span class="eyebrow">連續記錄</span>
+                    <span style="font-size:11px;color:var(--muted)">再 3 日解鎖新邊框</span>
+                </div>
+
+                <div class="stamps">
+                    <div class="stamp-day">
+                        <div class="stamp done">照</div>
+                        一
+                    </div>
+
+                    <div class="stamp-day">
+                        <div class="stamp done">食</div>
+                        二
+                    </div>
+
+                    <div class="stamp-day">
+                        <div class="stamp done">照</div>
+                        三
+                    </div>
+
+                    <div class="stamp-day">
+                        <div class="stamp done">食</div>
+                        四
+                    </div>
+
+                    <div class="stamp-day">
+                        <div class="stamp today">5</div>
+                        五
+                    </div>
+
+                    <div class="stamp-day">
+                        <div class="stamp">6</div>
+                        六
+                    </div>
+
+                    <div class="stamp-day">
+                        <div class="stamp">7</div>
+                        日
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+        <p class="disclaimer">
+            照食分析僅供日常飲食及養生參考，不構成醫療診斷或治療建議。
+        </p>
+
+    </main>
+
+
+    <!-- ================= RECOGNITION ================= -->
+
+    <main id="recognition" class="screen">
+
+        <div class="recognition">
+
+            <button class="back-button" onclick="goHome()">← 返回</button>
+
+            <div class="eyebrow">AI 食材辨識 · Demo</div>
+
+            <div class="photo-preview" style="margin-top:8px">
+                <div class="food-art">🍗</div>
+                <div class="photo-corner">AI 已辨識</div>
+            </div>
+
+            <div class="analysis-card reveal">
+
+                <div class="analysis-section">
+
+                    <div class="analysis-label">食材辨識</div>
+
+                    <div class="analysis-food">
+
+                        <div>
+                            <div class="analysis-food-name">脆皮燒雞</div>
+                            <div class="chip-row" style="margin-top:9px">
+
+                                <button class="chip active editable-chip"
+                                        onclick="cycleFoodTag(this)">
+                                    燒製
+                                </button>
+
+                                <button class="chip editable-chip"
+                                        onclick="cycleFoodTag(this)">
+                                    雞肉
+                                </button>
+
+                                <button class="chip editable-chip"
+                                        onclick="cycleFoodTag(this)">
+                                    脆皮
+                                </button>
+
+                            </div>
+                        </div>
+
+                        <span class="badge badge-warm">偏熱</span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="analysis-section">
+
+                    <div class="analysis-label">屬性判斷</div>
+
+                    <div style="display:flex;align-items:center;gap:12px">
+
+                        <div style="font-family:'Noto Serif TC';font-size:28px;color:var(--warm)">
+                            熱
+                        </div>
+
+                        <div style="flex:1">
+
+                            <div style="height:7px;background:#EEE8DF;border-radius:99px;overflow:hidden">
+                                <div style="width:76%;height:100%;background:var(--warm);border-radius:99px"></div>
+                            </div>
+
+                            <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--muted);margin-top:5px">
+                                <span>偏寒</span>
+                                <span>較平</span>
+                                <span>偏熱</span>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="analysis-section">
+
+                    <div class="analysis-label">營養概覽 · 每份估算</div>
+
+                    <div class="nutrition">
+
+                        <div class="nutrition-item">
+                            <span class="nutrition-value">420</span>
+                            <span class="nutrition-label">kcal</span>
+                        </div>
+
+                        <div class="nutrition-item">
+                            <span class="nutrition-value">29g</span>
+                            <span class="nutrition-label">蛋白質</span>
+                        </div>
+
+                        <div class="nutrition-item">
+                            <span class="nutrition-value">24g</span>
+                            <span class="nutrition-label">脂肪</span>
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="analysis-section">
+
+                    <div class="analysis-label">體質相應建議</div>
+
+                    <div class="body-advice">
+                        你近期飲食呈現<strong>偏熱氣傾向</strong>，
+                        呢餐可以照食，但之後一餐建議揀清爽、少油炸嘅食物，
+                        幫身體保持平衡。
+                    </div>
+
+                </div>
+
+            </div>
+
+            <button class="recognize-button" onclick="confirmMeal()">
+                確認呢餐，幫我記低
+            </button>
+
+            <p class="disclaimer">
+                AI 分析根據食物圖片及模擬體質資料作出，僅供日常參考，不構成醫療診斷或治療建議。
+            </p>
+
+        </div>
+
+    </main>
+
+
+    <!-- ================= RESULT ================= -->
+
+    <main id="result" class="screen">
+
+        <div class="result-page">
+
+            <button class="back-button" onclick="showScreen('recognition')">← 返回</button>
+
+            <div class="eyebrow">照食修圖 · 今日第 3 餐</div>
+
+            <div class="result-photo" style="margin-top:8px">
+
+                <div class="result-food">🍗</div>
+
+                <div class="result-overlay">
+
+                    <div class="result-copy">
+                        燒雞好味！<br>
+                        但好熱氣！
+                    </div>
+
+                </div>
+
+                <div class="watermark">
+                    照食 · 照樣食得有數
+                </div>
+
+            </div>
+
+            <div class="result-actions">
+
+                <button class="result-action"
+                        onclick="showToast('已模擬分享圖片')">
+                    ↗ 分享
+                </button>
+
+                <button class="result-action primary"
+                        onclick="openShop()">
+                    睇下點配 →
+                </button>
+
+            </div>
+
+            <p class="disclaimer">
+                修圖文案為日常體感描述，僅供娛樂及飲食記錄參考。
+            </p>
+
+        </div>
+
+    </main>
+
+
+    <!-- ================= REPORT ================= -->
+
+    <main id="report" class="screen">
+
+        <div class="report-header">
+
+            <div class="eyebrow">飲食 Report</div>
+            <h1 class="section-title" style="font-size:26px;margin-top:4px">
+                最近食成點？
+            </h1>
+
+            <div class="period-switch">
+
+                <button class="period-btn active"
+                        onclick="switchPeriod(this,'week')">
+                    本週
+                </button>
+
+                <button class="period-btn"
+                        onclick="switchPeriod(this,'month')">
+                    本月
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <div class="report-card card">
+
+            <div class="chart-title">寒熱分布</div>
+
+            <div class="chart-wrap">
+
+                <svg viewBox="0 0 350 145"
+                     width="100%"
+                     height="100%"
+                     role="img"
+                     aria-label="本週飲食寒熱分布：偏熱 42%，較平 38%，偏寒 20%">
+
+                    <line x1="30" y1="15" x2="30" y2="120"
+                          stroke="#DED7CC" stroke-width="1"/>
+
+                    <line x1="30" y1="120" x2="330" y2="120"
+                          stroke="#DED7CC" stroke-width="1"/>
+
+                    <rect x="60" y="58" width="48" height="62"
+                          rx="8" fill="#B75A35"/>
+
+                    <rect x="150" y="65" width="48" height="55"
+                          rx="8" fill="#A9A18E"/>
+
+                    <rect x="240" y="86" width="48" height="34"
+                          rx="8" fill="#607D91"/>
+
+                    <text x="84" y="51"
+                          text-anchor="middle"
+                          font-size="11"
+                          fill="#6D665D">42%</text>
+
+                    <text x="174" y="58"
+                          text-anchor="middle"
+                          font-size="11"
+                          fill="#6D665D">38%</text>
+
+                    <text x="264" y="79"
+                          text-anchor="middle"
+                          font-size="11"
+                          fill="#6D665D">20%</text>
+
+                    <text x="84" y="137"
+                          text-anchor="middle"
+                          font-size="10"
+                          fill="#858078">偏熱</text>
+
+                    <text x="174" y="137"
+                          text-anchor="middle"
+                          font-size="10"
+                          fill="#858078">較平</text>
+
+                    <text x="264" y="137"
+                          text-anchor="middle"
+                          font-size="10"
+                          fill="#858078">偏寒</text>
+
+                </svg>
+
+            </div>
+
+            <div class="chart-summary">
+                文字摘要：本週 7 餐中，偏熱食物比例較高，主要集中於燒烤及辛辣類。
+            </div>
+
+        </div>
+
+
+        <div class="report-card card">
+
+            <div class="chart-title">高頻出現食物</div>
+
+            <div class="offender">
+
+                <div class="offender-icon">🌶️</div>
+
+                <div>
+                    <div class="offender-name">辣味食物</div>
+                    <div class="offender-desc">本週出現 4 次 · 偏熱氣</div>
+                </div>
+
+                <button class="shop-link" onclick="openShop()">
+                    配搭 →
+                </button>
+
+            </div>
+
+            <div class="offender">
+
+                <div class="offender-icon">🍗</div>
+
+                <div>
+                    <div class="offender-name">燒烤類</div>
+                    <div class="offender-desc">本週出現 3 次 · 偏燥熱</div>
+                </div>
+
+                <button class="shop-link" onclick="openShop()">
+                    配搭 →
+                </button>
+
+            </div>
+
+            <div class="offender">
+
+                <div class="offender-icon">🧋</div>
+
+                <div>
+                    <div class="offender-name">甜飲</div>
+                    <div class="offender-desc">本週出現 3 次 · 注意日常攝取</div>
+                </div>
+
+                <button class="shop-link" onclick="openShop()">
+                    配搭 →
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <div class="report-card card trend-card">
+
+            <div class="chart-title">體質傾向趨勢</div>
+
+            <svg viewBox="0 0 350 145"
+                 width="100%"
+                 height="145"
+                 role="img"
+                 aria-label="近期飲食偏熱氣傾向由較高逐步下降">
+
+                <line x1="30" y1="15" x2="30" y2="120"
+                      stroke="#DED7CC"/>
+
+                <line x1="30" y1="120" x2="330" y2="120"
+                      stroke="#DED7CC"/>
+
+                <polyline
+                    points="40,42 90,50 140,67 190,61 240,77 290,82 320,70"
+                    fill="none"
+                    stroke="#A33A32"
+                    stroke-width="3"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"/>
+
+                <circle cx="40" cy="42" r="4" fill="#A33A32"/>
+                <circle cx="90" cy="50" r="4" fill="#A33A32"/>
+                <circle cx="140" cy="67" r="4" fill="#A33A32"/>
+                <circle cx="190" cy="61" r="4" fill="#A33A32"/>
+                <circle cx="240" cy="77" r="4" fill="#A33A32"/>
+                <circle cx="290" cy="82" r="4" fill="#A33A32"/>
+                <circle cx="320" cy="70" r="4" fill="#A33A32"/>
+
+                <text x="40" y="137" font-size="9" fill="#858078">一</text>
+                <text x="90" y="137" font-size="9" fill="#858078">二</text>
+                <text x="140" y="137" font-size="9" fill="#858078">三</text>
+                <text x="190" y="137" font-size="9" fill="#858078">四</text>
+                <text x="240" y="137" font-size="9" fill="#858078">五</text>
+                <text x="290" y="137" font-size="9" fill="#858078">六</text>
+                <text x="320" y="137" font-size="9" fill="#858078">日</text>
+
+            </svg>
+
+            <div class="chart-summary">
+                文字摘要：近期偏熱氣傾向有輕微下降，仍建議留意燒烤及辛辣食物頻率。
+            </div>
+
+        </div>
+
+
+        <p class="disclaimer">
+            本報告僅供日常參考，不構成醫療診斷或治療建議，如有持續不適，請諮詢註冊中醫師或醫生。
+        </p>
+
+    </main>
+
+
+    <!-- ================= SHOP ================= -->
+
+    <main id="shop" class="screen">
+
+        <div class="shop-header">
+
+            <div class="eyebrow">照食商城 · 食品</div>
+
+            <h1 class="section-title"
+                style="font-size:27px;margin-top:4px">
+                為您推薦
+            </h1>
+
+            <div class="shop-hero">
+
+                <div class="shop-hero-title">
+                    今日點配？
+                </div>
+
+                <div class="shop-hero-copy">
+                    根據你最近飲食呈現嘅偏熱氣傾向，
+                    幫你揀咗幾款日常食療食品。
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="category-box">
+
+            <div class="category-scroll">
+
+                <button class="category"
+                        onclick="showToast('已切換：體質相應')">
+                    體質相應
+                </button>
+
+                <button class="category"
+                        onclick="showToast('已切換：湯包')">
+                    湯包
+                </button>
+
+                <button class="category"
+                        onclick="showToast('已切換：養生茶')">
+                    養生茶
+                </button>
+
+                <button class="category"
+                        onclick="showToast('已切換：營養食品')">
+                    營養食品
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <div class="product-list">
+
+            <div class="product-card card">
+
+                <div class="product-image">🍵</div>
+
+                <div class="product-info">
+
+                    <div class="chip-row">
+
+                        <span class="badge badge-food">食品</span>
+
+                        <span class="badge badge-neutral">
+                            執業中醫師設計
+                        </span>
+
+                    </div>
+
+                    <div class="product-title"
+                         style="margin-top:8px">
+                        清潤日常湯包
+                    </div>
+
+                    <div class="product-reason">
+                        為何適合您：近期飲食偏熱氣，
+                        可作日常清爽飲食搭配。
+                    </div>
+
+                    <div class="product-bottom">
+
+                        <div class="product-price">
+                            HK$68
+                        </div>
+
+                        <button class="add-button"
+                                onclick="addCart('清潤日常湯包')">
+                            加入購物袋
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="product-card card">
+
+                <div class="product-image">🌿</div>
+
+                <div class="product-info">
+
+                    <div class="chip-row">
+
+                        <span class="badge badge-food">食品</span>
+
+                        <span class="badge badge-neutral">
+                            執業中醫師設計
+                        </span>
+
+                    </div>
+
+                    <div class="product-title"
+                         style="margin-top:8px">
+                        日常輕養茶
+                    </div>
+
+                    <div class="product-reason">
+                        為何適合您：配合近期飲食節奏，
+                        適合平日作為無糖飲品選擇。
+                    </div>
+
+                    <div class="product-bottom">
+
+                        <div class="product-price">
+                            HK$48
+                        </div>
+
+                        <button class="add-button"
+                                onclick="addCart('日常輕養茶')">
+                            加入購物袋
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="product-card card">
+
+                <div class="product-image">🥣</div>
+
+                <div class="product-info">
+
+                    <div class="chip-row">
+
+                        <span class="badge badge-food">食品</span>
+
+                        <span class="badge badge-neutral">
+                            執業中醫師設計
+                        </span>
+
+                    </div>
+
+                    <div class="product-title"
+                         style="margin-top:8px">
+                        暖胃輕食湯
+                    </div>
+
+                    <div class="product-reason">
+                        為何適合您：如果下一餐想食得舒服啲，
+                        可以選擇較溫和嘅湯品。
+                    </div>
+
+                    <div class="product-bottom">
+
+                        <div class="product-price">
+                            HK$72
+                        </div>
+
+                        <button class="add-button"
+                                onclick="addCart('暖胃輕食湯')">
+                            加入購物袋
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <p class="disclaimer">
+            所有商品均定位為食品或膳食補充食品。商品資訊只作日常養生及膳食參考，不構成醫療診斷或治療建議。
+        </p>
+
+    </main>
+
+
+    <!-- ================= PROFILE ================= -->
+
+    <main id="profile" class="screen">
+
+        <div class="profile">
+
+            <div class="profile-head">
+
+                <div class="avatar">照</div>
+
+                <div>
+                    <div class="profile-name">Leo</div>
+                    <div class="profile-sub">
+                        已連續記錄 4 日 · 共 28 餐
+                    </div>
+                </div>
+
+            </div>
+
+
+            <div class="spectrum-card card">
+
+                <div class="eyebrow">我的體質光譜</div>
+
+                <div class="section-title"
+                     style="margin-top:4px">
+                    平和 ←→ 偏熱氣
+                </div>
+
+                <div class="spectrum">
+
+                    <div class="spectrum-line"></div>
+
+                    <div class="spectrum-point"
+                         aria-label="目前位置偏向濕熱"></div>
+
+                    <div class="spectrum-labels">
+                        <span>平和</span>
+                        <span>氣虛</span>
+                        <span>陽虛</span>
+                        <span>陰虛</span>
+                        <span>痰濕</span>
+                        <span>濕熱</span>
+                        <span>血瘀</span>
+                        <span>氣鬱</span>
+                        <span>特稟</span>
+                    </div>
+
+                </div>
+
+                <div class="spectrum-note">
+                    <strong>近期飲食傾向：</strong>
+                    偏熱氣較明顯。體質光譜會隨日常飲食及問卷更新，
+                    唔會以單一標籤定義你。
+                </div>
+
+            </div>
+
+
+            <div class="menu-list">
+
+                <button class="menu-item"
+                        onclick="openQuestionnaire()">
+
+                    <div class="menu-left">
+
+                        <span class="menu-icon">?</span>
+
+                        <span>
+                            快速體質問卷
+                            <small style="display:block;color:#999;font-size:9px;margin-top:2px">
+                                約 1 分鐘完成
+                            </small>
+                        </span>
+
+                    </div>
+
+                    <span class="arrow">›</span>
+
+                </button>
+
+
+                <button class="menu-item"
+                        onclick="showToast('隱私設定 Demo')">
+
+                    <div class="menu-left">
+
+                        <span class="menu-icon">⌁</span>
+
+                        <span>隱私與同意設定</span>
+
+                    </div>
+
+                    <span class="arrow">›</span>
+
+                </button>
+
+
+                <button class="menu-item"
+                        onclick="showToast('通知設定 Demo')">
+
+                    <div class="menu-left">
+
+                        <span class="menu-icon">○</span>
+
+                        <span>通知設定</span>
+
+                    </div>
+
+                    <span class="arrow">›</span>
+
+                </button>
+
+
+                <button class="menu-item"
+                        onclick="showToast('關於照食 Demo')">
+
+                    <div class="menu-left">
+
+                        <span class="menu-icon">i</span>
+
+                        <span>關於照食</span>
+
+                    </div>
+
+                    <span class="arrow">›</span>
+
+                </button>
+
+            </div>
+
+
+            <p class="disclaimer"
+                 style="margin-left:0;margin-right:0">
+
+                體質光譜及飲食分析僅供日常參考，
+                不構成醫療診斷或治療建議。
+            </p>
+
+        </div>
+
+    </main>
+
+
+    <!-- Bottom Navigation -->
+
+    <nav class="bottom-nav" aria-label="主要導航">
+
+        <button class="nav-item active"
+                data-screen="home"
+                onclick="showScreen('home')">
+
+            <span class="nav-icon">⌂</span>
+            <span>首頁</span>
+
+        </button>
+
+        <button class="nav-item"
+                data-screen="report"
+                onclick="showScreen('report')">
+
+            <span class="nav-icon">◫</span>
+            <span>Report</span>
+
+        </button>
+
+        <button class="nav-item"
+                data-screen="shop"
+                onclick="showScreen('shop')">
+
+            <span class="nav-icon">♢</span>
+            <span>商城</span>
+
+        </button>
+
+        <button class="nav-item"
+                data-screen="profile"
+                onclick="showScreen('profile')">
+
+            <span class="nav-icon">○</span>
+            <span>我的</span>
+
+        </button>
+
+    </nav>
+
+</div>
+
+
+<!-- Stamp Overlay -->
+
+<div class="stamp-overlay"
+     id="stampOverlay"
+     onclick="closeStamp()">
+
+    <div class="big-stamp">
+        照<br>食
+    </div>
+
+</div>
+
+
+<!-- Questionnaire Modal -->
+
+<div class="modal"
+     id="questionModal">
+
+    <div class="modal-sheet">
+
+        <div class="modal-handle"></div>
+
+        <div class="question-progress"
+             id="questionProgress">
+            第 1 / 4 題
+        </div>
+
+        <div class="question-title"
+             id="questionTitle">
+            平時食完辣嘢，你比較容易？
+        </div>
+
+        <div id="answerList"></div>
+
+        <button class="question-next"
+                id="questionNext"
+                onclick="nextQuestion()">
+            下一題
+        </button>
+
+    </div>
+
+</div>
+
+
+<div class="toast" id="toast"></div>
+
+
+<script>
+
+/* =========================================================
+   Mock Data
+   將來接 API 時，可以將這部分替換成 API response。
+========================================================= */
+
+const mockFood = {
+    name: "脆皮燒雞",
+    tags: ["燒製", "雞肉", "脆皮"],
+    nature: "偏熱",
+    heatScore: 76,
+    calories: "420",
+    protein: "29g",
+    fat: "24g",
+    advice: "你近期飲食呈現偏熱氣傾向，呢餐可以照食，但之後一餐建議揀清爽、少油炸嘅食物，幫身體保持平衡。",
+    slogan: "燒雞好味！\n但好熱氣！"
+};
+
+const questions = [
+    {
+        title: "平時食完辣嘢，你比較容易？",
+        answers: [
+            "覺得口乾、想飲水",
+            "冇乜特別感覺",
+            "反而覺得幾舒服",
+            "平時少食辣，唔清楚"
+        ]
+    },
+    {
+        title: "你平時最容易想食邊類食物？",
+        answers: [
+            "香辣、燒烤",
+            "甜食、奶茶",
+            "清淡湯水",
+            "冰凍飲品"
+        ]
+    },
+    {
+        title: "平時飲水習慣比較似？",
+        answers: [
+            "成日都想飲",
+            "口渴先飲",
+            "習慣少量多次",
+            "每日飲得唔多"
+        ]
+    },
+    {
+        title: "最近飲食節奏點樣？",
+        answers: [
+            "比較多外賣",
+            "三餐算規律",
+            "有時忙到唔記得食",
+            "最近開始留意飲食"
+        ]
+    }
+];
+
+let currentQuestion = 0;
+let selectedAnswer = null;
+let stampTimer = null;
+
+
+/* =========================================================
+   Screen Navigation
+========================================================= */
+
+function showScreen(screenId) {
+
+    document.querySelectorAll(".screen").forEach(screen => {
+        screen.classList.remove("active");
+    });
+
+    const target = document.getElementById(screenId);
+
+    if (target) {
+        target.classList.add("active");
+        target.scrollTop = 0;
+    }
+
+    document.querySelectorAll(".nav-item").forEach(item => {
+        item.classList.toggle(
+            "active",
+            item.dataset.screen === screenId
+        );
+    });
+}
+
+
+function goHome() {
+    showScreen("home");
+}
+
+
+/* =========================================================
+   Camera / AI Recognition Flow
+========================================================= */
+
+function startRecognition() {
+
+    showScreen("recognition");
+
+    const card = document.querySelector("#recognition .analysis-card");
+
+    card.classList.remove("reveal");
+
+    requestAnimationFrame(() => {
+        card.classList.add("reveal");
+    });
+
+    showToast("AI 正在辨識你的食物…");
+
+}
+
+
+function confirmMeal() {
+
+    showScreen("result");
+
+    setTimeout(() => {
+
+        document.getElementById("stampOverlay").classList.add("show");
+
+        stampTimer = setTimeout(() => {
+            closeStamp();
+        }, 1250);
+
+    }, 250);
+
+}
+
+
+function closeStamp() {
+
+    clearTimeout(stampTimer);
+
+    document.getElementById("stampOverlay").classList.remove("show");
+
+}
+
+
+/* =========================================================
+   Food Tag Editing
+========================================================= */
+
+function cycleFoodTag(button) {
+
+    const alternatives = [
+        ["燒製", "煎製", "蒸煮"],
+        ["雞肉", "豬肉", "魚肉"],
+        ["脆皮", "去皮", "少油"]
+    ];
+
+    const original = button.dataset.index;
+
+    if (original === undefined) {
+        button.dataset.index = "0";
+    }
+
+    const group = button.textContent.trim();
+
+    let values;
+
+    if (
+        group === "燒製" ||
+        group === "煎製" ||
+        group === "蒸煮"
+    ) {
+        values = alternatives[0];
+    } else if (
+        group === "雞肉" ||
+        group === "豬肉" ||
+        group === "魚肉"
+    ) {
+        values = alternatives[1];
+    } else {
+        values = alternatives[2];
+    }
+
+    let current = values.indexOf(button.textContent.trim());
+
+    if (current < 0) current = 0;
+
+    current = (current + 1) % values.length;
+
+    button.textContent = values[current];
+
+    showToast("已更新食材標籤");
+
+}
+
+
+/* =========================================================
+   Report Period
+========================================================= */
+
+function switchPeriod(button, period) {
+
+    document.querySelectorAll(".period-btn")
+        .forEach(btn => btn.classList.remove("active"));
+
+    button.classList.add("active");
+
+    if (period === "month") {
+        showToast("已切換至本月 Report");
+    } else {
+        showToast("已切換至本週 Report");
+    }
+
+}
+
+
+/* =========================================================
+   Shop
+========================================================= */
+
+function openShop() {
+    showScreen("shop");
+}
+
+
+function addCart(product) {
+
+    showToast(product + " 已加入購物袋");
+
+}
+
+
+/* =========================================================
+   Questionnaire
+========================================================= */
+
+function openQuestionnaire() {
+
+    currentQuestion = 0;
+    selectedAnswer = null;
+
+    renderQuestion();
+
+    document.getElementById("questionModal")
+        .classList.add("show");
+
+}
+
+
+function renderQuestion() {
+
+    const question = questions[currentQuestion];
+
+    document.getElementById("questionProgress").textContent =
+        `第 ${currentQuestion + 1} / ${questions.length} 題`;
+
+    document.getElementById("questionTitle").textContent =
+        question.title;
+
+    const list = document.getElementById("answerList");
+
+    list.innerHTML = "";
+
+    question.answers.forEach((answer, index) => {
+
+        const button = document.createElement("button");
+
+        button.className = "answer-option";
+
+        button.textContent = answer;
+
+        button.onclick = () => {
+
+            document
+                .querySelectorAll(".answer-option")
+                .forEach(item => item.classList.remove("selected"));
+
+            button.classList.add("selected");
+
+            selectedAnswer = index;
+
+        };
+
+        list.appendChild(button);
+
+    });
+
+    document.getElementById("questionNext").textContent =
+        currentQuestion === questions.length - 1
+            ? "完成問卷"
+            : "下一題";
+
+}
+
+
+function nextQuestion() {
+
+    if (selectedAnswer === null) {
+
+        showToast("揀一個答案先啦");
+
+        return;
+    }
+
+    if (currentQuestion < questions.length - 1) {
+
+        currentQuestion++;
+
+        selectedAnswer = null;
+
+        renderQuestion();
+
+    } else {
+
+        document.getElementById("questionModal")
+            .classList.remove("show");
+
+        showToast("問卷完成，已更新你的體質光譜");
+
+    }
+
+}
+
+
+/* =========================================================
+   Toast
+========================================================= */
+
+let toastTimer;
+
+function showToast(message) {
+
+    const toast = document.getElementById("toast");
+
+    toast.textContent = message;
+
+    toast.classList.add("show");
+
+    clearTimeout(toastTimer);
+
+    toastTimer = setTimeout(() => {
+        toast.classList.remove("show");
+    }, 1800);
+
+}
+
+
+/* =========================================================
+   Keyboard accessibility
+========================================================= */
+
+document.addEventListener("keydown", event => {
+
+    if (event.key === "Escape") {
+
+        document
+            .getElementById("questionModal")
+            .classList.remove("show");
+
+        closeStamp();
+
+    }
+
+});
+
+
+/* =========================================================
+   Prevent modal click-through
+========================================================= */
+
+document
+    .querySelector(".modal-sheet")
+    .addEventListener("click", event => {
+        event.stopPropagation();
+    });
+
+
+/* =========================================================
+   Demo initialization
+========================================================= */
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    showScreen("home");
+
+});
+
+</script>
+
+</body>
+</html>
