@@ -2,8 +2,19 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
+<meta name="viewport"
+      content="width=device-width,
+               initial-scale=1,
+               maximum-scale=1,
+               minimum-scale=1,
+               user-scalable=no,
+               viewport-fit=cover">
+
 <meta name="theme-color" content="#F7F4EE">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+
 <title>照食｜AI 中醫體質飲食管理</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -11,6 +22,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&family=Noto+Serif+TC:wght@500;600;700&display=swap" rel="stylesheet">
 
 <style>
+
 :root {
     --bg: #F7F4EE;
     --paper: #FFFDF8;
@@ -22,12 +34,12 @@
     --red-dark: #842D28;
     --red-light: #F3E4DF;
     --gold: #B18A4A;
-    --green: #5D735D;
-    --blue: #60758A;
+    --green: #64765D;
     --warm: #B75A35;
     --cool: #607D91;
     --shadow: 0 10px 30px rgba(54,45,34,.07);
     --radius: 20px;
+    --nav-height: 72px;
 }
 
 * {
@@ -36,69 +48,79 @@
 }
 
 html {
+    width: 100%;
+    min-height: 100%;
     background: #DDD8CF;
+    touch-action: manipulation;
+    overscroll-behavior: none;
 }
 
 body {
     margin: 0;
+    width: 100%;
     min-width: 320px;
-    min-height: 100vh;
-    background:
-        radial-gradient(circle at 50% 0%, rgba(255,255,255,.7), transparent 35%),
-        #DDD8CF;
+    min-height: 100dvh;
+    background: #DDD8CF;
     color: var(--ink);
     font-family: "Noto Sans TC", sans-serif;
+    touch-action: manipulation;
+    overscroll-behavior: none;
 }
 
 button,
-input {
+input,
+textarea {
     font: inherit;
 }
 
 button {
     border: 0;
     cursor: pointer;
+    touch-action: manipulation;
 }
 
 button:focus-visible,
-input:focus-visible {
+input:focus-visible,
+textarea:focus-visible {
     outline: 3px solid rgba(163,58,50,.28);
     outline-offset: 3px;
 }
 
 .app-shell {
-    width: min(100%, 430px);
-    min-height: 100vh;
-    margin: auto;
+    width: 100%;
+    height: 100dvh;
+    min-height: 100dvh;
+    margin: 0 auto;
     background: var(--bg);
     position: relative;
     overflow: hidden;
 }
 
 @media (min-width: 600px) {
+
     body {
         padding: 28px 0;
     }
 
     .app-shell {
-        min-height: 844px;
-        height: calc(100vh - 56px);
+        width: min(430px, 100%);
+        height: calc(100dvh - 56px);
+        min-height: 760px;
         max-height: 920px;
         border-radius: 34px;
-        box-shadow: 0 25px 80px rgba(40,35,28,.18);
         border: 8px solid #292824;
+        box-shadow: 0 25px 80px rgba(40,35,28,.18);
     }
 }
 
-/* ---------- App Header ---------- */
-
 .top-safe {
     height: env(safe-area-inset-top);
-    min-height: 8px;
+    min-height: 6px;
 }
 
 .header {
-    padding: 14px 20px 8px;
+    height: 58px;
+    padding: 8px 20px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -137,15 +159,22 @@ input:focus-visible {
     font-size: 20px;
 }
 
-/* ---------- Screens ---------- */
-
 .screen {
     display: none;
-    height: calc(100vh - 83px);
-    min-height: 690px;
+    height: calc(
+        100dvh
+        - 58px
+        - env(safe-area-inset-top)
+        - var(--nav-height)
+        - env(safe-area-inset-bottom)
+    );
+    min-height: 0;
     overflow-y: auto;
-    padding-bottom: 105px;
+    overflow-x: hidden;
+    padding-bottom: 25px;
     scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-y: contain;
 }
 
 .screen::-webkit-scrollbar {
@@ -157,12 +186,15 @@ input:focus-visible {
 }
 
 @media (min-width: 600px) {
+
     .screen {
-        height: calc(100% - 83px);
+        height: calc(
+            100%
+            - 58px
+            - var(--nav-height)
+        );
     }
 }
-
-/* ---------- Common ---------- */
 
 .page-padding {
     padding: 10px 20px 0;
@@ -264,7 +296,7 @@ input:focus-visible {
     background: var(--red-light);
 }
 
-/* ---------- Home ---------- */
+/* ================= HOME ================= */
 
 .today-line {
     display: flex;
@@ -285,7 +317,7 @@ input:focus-visible {
 }
 
 .home-hero {
-    min-height: 350px;
+    min-height: 315px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -305,6 +337,7 @@ input:focus-visible {
     inset: 0;
     border-radius: 50%;
     border: 1px solid #D8CDC0;
+    pointer-events: none;
 }
 
 .camera-ring::after {
@@ -316,8 +349,10 @@ input:focus-visible {
 }
 
 .camera-button {
-    width: 142px;
-    height: 142px;
+    position: relative;
+    z-index: 2;
+    width: 150px;
+    height: 150px;
     border-radius: 50%;
     background: var(--red);
     color: white;
@@ -328,7 +363,9 @@ input:focus-visible {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    transition: transform .15s ease, background .15s ease;
+    transition:
+        transform .15s ease,
+        background .15s ease;
 }
 
 .camera-button:hover {
@@ -336,25 +373,29 @@ input:focus-visible {
     background: var(--red-dark);
 }
 
+.camera-button:active {
+    transform: scale(.95);
+}
+
 .camera-icon {
-    font-size: 32px;
+    font-size: 34px;
     margin-bottom: 5px;
 }
 
 .camera-text {
     font-family: "Noto Serif TC", serif;
-    font-size: 18px;
+    font-size: 19px;
 }
 
 .camera-sub {
-    font-size: 11px;
+    font-size: 10px;
     opacity: .8;
     margin-top: 3px;
 }
 
 .hero-copy {
     text-align: center;
-    margin-top: 15px;
+    margin-top: 12px;
 }
 
 .hero-copy strong {
@@ -369,7 +410,49 @@ input:focus-visible {
     color: var(--muted);
 }
 
-/* ---------- Meal cards ---------- */
+.calorie-summary {
+    margin-top: 10px;
+    padding: 15px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+}
+
+.calorie-number {
+    font-family: "Noto Serif TC", serif;
+    font-size: 25px;
+    color: var(--ink);
+}
+
+.calorie-number span {
+    font-family: "Noto Sans TC";
+    font-size: 11px;
+    color: var(--muted);
+}
+
+.calorie-target {
+    text-align: right;
+    font-size: 10px;
+    color: var(--muted);
+}
+
+.calorie-progress {
+    grid-column: 1 / -1;
+    height: 6px;
+    background: #ECE6DD;
+    border-radius: 99px;
+    margin-top: 10px;
+    overflow: hidden;
+}
+
+.calorie-progress div {
+    width: 58%;
+    height: 100%;
+    border-radius: 99px;
+    background: var(--red);
+}
+
+/* meals */
 
 .meal-card {
     display: grid;
@@ -405,14 +488,20 @@ input:focus-visible {
     color: var(--muted);
 }
 
+.meal-calorie {
+    font-size: 10px;
+    color: var(--red);
+    margin-top: 3px;
+}
+
 .meal-advice {
-    margin-top: 9px;
+    margin-top: 7px;
     font-size: 12px;
     color: #625D55;
     line-height: 1.5;
 }
 
-/* ---------- Stamps ---------- */
+/* stamps */
 
 .stamp-card {
     padding: 16px;
@@ -466,10 +555,139 @@ input:focus-visible {
     color: var(--red);
 }
 
-/* ---------- Recognition ---------- */
+/* ================= AI ANALYSIS ================= */
+
+.ai-page {
+    padding: 14px 20px 30px;
+}
+
+.ai-stage {
+    height: 280px;
+    margin-top: 8px;
+    border-radius: 24px;
+    overflow: hidden;
+    position: relative;
+    background:
+        radial-gradient(circle at 50% 45%, #E7D1B4, transparent 45%),
+        linear-gradient(145deg,#E0C29D,#B17D52);
+    display: grid;
+    place-items: center;
+}
+
+.ai-food {
+    font-size: 110px;
+    filter: drop-shadow(0 18px 15px rgba(40,25,10,.2));
+    position: relative;
+    z-index: 2;
+}
+
+.ai-scan {
+    position: absolute;
+    left: 10%;
+    right: 10%;
+    height: 2px;
+    background: rgba(255,255,255,.9);
+    box-shadow: 0 0 18px rgba(255,255,255,.9);
+    top: 20%;
+    z-index: 4;
+    animation: scan 1.7s ease-in-out infinite;
+}
+
+@keyframes scan {
+    0% {
+        top: 18%;
+        opacity: .25;
+    }
+
+    50% {
+        opacity: 1;
+    }
+
+    100% {
+        top: 82%;
+        opacity: .25;
+    }
+}
+
+.ai-corners span {
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    border-color: white;
+    border-style: solid;
+    opacity: .75;
+}
+
+.ai-corners .tl {
+    top: 20px;
+    left: 20px;
+    border-width: 2px 0 0 2px;
+}
+
+.ai-corners .tr {
+    top: 20px;
+    right: 20px;
+    border-width: 2px 2px 0 0;
+}
+
+.ai-corners .bl {
+    bottom: 20px;
+    left: 20px;
+    border-width: 0 0 2px 2px;
+}
+
+.ai-corners .br {
+    bottom: 20px;
+    right: 20px;
+    border-width: 0 2px 2px 0;
+}
+
+.ai-status {
+    position: absolute;
+    bottom: 18px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    color: white;
+    font-size: 13px;
+    z-index: 5;
+    text-shadow: 0 1px 5px rgba(0,0,0,.3);
+}
+
+.ai-steps {
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    gap: 7px;
+    margin-top: 12px;
+}
+
+.ai-step {
+    background: white;
+    border: 1px solid var(--line);
+    border-radius: 13px;
+    padding: 10px 5px;
+    text-align: center;
+    font-size: 9px;
+    color: #AAA39A;
+    transition: all .2s ease;
+}
+
+.ai-step.active {
+    color: var(--red);
+    border-color: #DDB6AF;
+    background: var(--red-light);
+}
+
+.ai-step.done {
+    color: var(--green);
+    border-color: #CBD6C5;
+    background: #EFF3EB;
+}
+
+/* ================= RECOGNITION ================= */
 
 .recognition {
-    padding: 14px 20px 120px;
+    padding: 14px 20px 30px;
 }
 
 .back-button {
@@ -481,7 +699,7 @@ input:focus-visible {
 }
 
 .photo-preview {
-    height: 230px;
+    height: 220px;
     border-radius: 22px;
     background:
         radial-gradient(circle at 30% 30%, rgba(255,255,255,.75), transparent 30%),
@@ -547,12 +765,12 @@ input:focus-visible {
 
 .nutrition {
     display: grid;
-    grid-template-columns: repeat(3,1fr);
-    gap: 7px;
+    grid-template-columns: repeat(4,1fr);
+    gap: 6px;
 }
 
 .nutrition-item {
-    padding: 9px 6px;
+    padding: 9px 4px;
     background: #F7F4EE;
     border-radius: 11px;
     text-align: center;
@@ -560,13 +778,13 @@ input:focus-visible {
 
 .nutrition-value {
     display: block;
-    font-size: 15px;
+    font-size: 14px;
     font-weight: 600;
 }
 
 .nutrition-label {
     display: block;
-    font-size: 9px;
+    font-size: 8px;
     color: var(--muted);
     margin-top: 2px;
 }
@@ -587,7 +805,7 @@ input:focus-visible {
 .recognize-button {
     width: 100%;
     height: 58px;
-    margin-top: 18px;
+    margin-top: 14px;
     border-radius: 17px;
     color: white;
     background: var(--red);
@@ -596,14 +814,94 @@ input:focus-visible {
     box-shadow: 0 10px 22px rgba(163,58,50,.18);
 }
 
-/* ---------- Result ---------- */
+.error-button {
+    width: 100%;
+    height: 44px;
+    margin-top: 8px;
+    border-radius: 14px;
+    color: #777168;
+    background: transparent;
+    font-size: 12px;
+}
+
+/* ================= EDIT RECOGNITION ================= */
+
+.edit-box {
+    margin-top: 12px;
+    padding: 15px;
+    background: white;
+    border-radius: 18px;
+    border: 1px solid var(--line);
+}
+
+.edit-title {
+    font-family: "Noto Serif TC", serif;
+    font-size: 17px;
+}
+
+.edit-sub {
+    font-size: 10px;
+    color: var(--muted);
+    margin-top: 3px;
+}
+
+.edit-input-row {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.edit-input {
+    flex: 1;
+    min-width: 0;
+    height: 45px;
+    padding: 0 13px;
+    border: 1px solid var(--line);
+    border-radius: 13px;
+    background: #FAF8F4;
+    color: var(--ink);
+}
+
+.voice-button {
+    width: 45px;
+    height: 45px;
+    border-radius: 13px;
+    background: #F0ECE5;
+    color: var(--red);
+    font-size: 18px;
+}
+
+.edit-submit {
+    width: 100%;
+    height: 45px;
+    border-radius: 13px;
+    margin-top: 8px;
+    background: var(--red);
+    color: white;
+    font-size: 12px;
+}
+
+.voice-listening {
+    background: var(--red);
+    color: white;
+    animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+    50% {
+        transform: scale(.94);
+        opacity: .75;
+    }
+}
+
+/* ================= RESULT ================= */
 
 .result-page {
-    padding: 14px 20px 120px;
+    padding: 14px 20px 30px;
 }
 
 .result-photo {
-    height: 440px;
+    height: 400px;
     border-radius: 24px;
     position: relative;
     overflow: hidden;
@@ -632,6 +930,7 @@ input:focus-visible {
     font-family: "Noto Serif TC", serif;
     font-size: 24px;
     line-height: 1.45;
+    white-space: pre-line;
     text-shadow: 0 2px 8px rgba(0,0,0,.3);
 }
 
@@ -666,7 +965,7 @@ input:focus-visible {
     border-color: var(--red);
 }
 
-/* ---------- Stamp Animation ---------- */
+/* ================= STAMP ================= */
 
 .stamp-overlay {
     position: fixed;
@@ -706,20 +1005,23 @@ input:focus-visible {
         transform: scale(2.2) rotate(-18deg);
         opacity: 0;
     }
+
     55% {
         transform: scale(.92) rotate(-5deg);
         opacity: 1;
     }
+
     75% {
         transform: scale(1.05) rotate(-8deg);
     }
+
     100% {
         transform: scale(1) rotate(-8deg);
         opacity: 1;
     }
 }
 
-/* ---------- Report ---------- */
+/* ================= REPORT ================= */
 
 .report-header {
     padding: 10px 20px 0;
@@ -771,6 +1073,103 @@ input:focus-visible {
     line-height: 1.5;
 }
 
+/* calories */
+
+.calorie-report {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 9px;
+}
+
+.calorie-box {
+    background: #F7F4EE;
+    border-radius: 14px;
+    padding: 12px;
+}
+
+.calorie-box-value {
+    font-family: "Noto Serif TC", serif;
+    font-size: 23px;
+}
+
+.calorie-box-label {
+    font-size: 9px;
+    color: var(--muted);
+}
+
+.calorie-bar {
+    height: 7px;
+    background: #E5DFD6;
+    border-radius: 99px;
+    margin-top: 8px;
+    overflow: hidden;
+}
+
+.calorie-bar div {
+    height: 100%;
+    width: 72%;
+    background: var(--red);
+    border-radius: 99px;
+}
+
+/* spectrum */
+
+.report-spectrum {
+    position: relative;
+    height: 120px;
+    margin-top: 10px;
+}
+
+.report-spectrum-line {
+    position: absolute;
+    left: 5px;
+    right: 5px;
+    top: 43px;
+    height: 7px;
+    border-radius: 99px;
+    background:
+        linear-gradient(
+            90deg,
+            #71889A,
+            #9A9D78,
+            #C69A62,
+            #A8665D,
+            #73788A
+        );
+}
+
+.report-spectrum-point {
+    position: absolute;
+    top: 32px;
+    left: 67%;
+    width: 29px;
+    height: 29px;
+    border-radius: 50%;
+    background: white;
+    border: 5px solid var(--red);
+    box-shadow: 0 3px 12px rgba(0,0,0,.12);
+}
+
+.report-spectrum-labels {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 64px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 8px;
+    color: var(--muted);
+}
+
+.report-spectrum-note {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    font-size: 10px;
+    color: #69635A;
+}
+
 .offender {
     display: grid;
     grid-template-columns: 43px 1fr auto;
@@ -811,11 +1210,7 @@ input:focus-visible {
     font-size: 11px;
 }
 
-.trend-card {
-    padding-bottom: 11px;
-}
-
-/* ---------- Shop ---------- */
+/* ================= SHOP ================= */
 
 .shop-header {
     padding: 10px 20px;
@@ -918,10 +1313,10 @@ input:focus-visible {
     font-size: 11px;
 }
 
-/* ---------- Profile ---------- */
+/* ================= PROFILE ================= */
 
 .profile {
-    padding: 10px 20px 120px;
+    padding: 10px 20px 30px;
 }
 
 .profile-head {
@@ -953,66 +1348,8 @@ input:focus-visible {
     margin-top: 3px;
 }
 
-.spectrum-card {
-    margin-top: 18px;
-    padding: 17px;
-}
-
-.spectrum {
-    position: relative;
-    height: 130px;
-    margin-top: 18px;
-}
-
-.spectrum-line {
-    position: absolute;
-    left: 5px;
-    right: 5px;
-    top: 54px;
-    height: 5px;
-    border-radius: 99px;
-    background: linear-gradient(90deg,
-        #6D8191,
-        #9A9D78,
-        #C49A62,
-        #A9655C,
-        #6E7485
-    );
-}
-
-.spectrum-point {
-    position: absolute;
-    top: 42px;
-    left: 66%;
-    width: 29px;
-    height: 29px;
-    background: white;
-    border: 5px solid var(--red);
-    border-radius: 50%;
-    box-shadow: 0 3px 12px rgba(0,0,0,.12);
-}
-
-.spectrum-labels {
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 72px;
-    display: flex;
-    justify-content: space-between;
-    font-size: 9px;
-    color: var(--muted);
-}
-
-.spectrum-note {
-    background: #F7F4EE;
-    padding: 10px;
-    border-radius: 12px;
-    font-size: 11px;
-    line-height: 1.6;
-}
-
 .menu-list {
-    margin-top: 13px;
+    margin-top: 18px;
 }
 
 .menu-item {
@@ -1057,7 +1394,7 @@ input:focus-visible {
     color: #AAA39A;
 }
 
-/* ---------- Questionnaire ---------- */
+/* ================= QUESTIONNAIRE ================= */
 
 .modal {
     position: fixed;
@@ -1078,7 +1415,7 @@ input:focus-visible {
     background: var(--paper);
     border-radius: 28px 28px 0 0;
     padding: 18px 20px calc(25px + env(safe-area-inset-bottom));
-    max-height: 88vh;
+    max-height: 88dvh;
     overflow-y: auto;
 }
 
@@ -1126,7 +1463,7 @@ input:focus-visible {
     margin-top: 10px;
 }
 
-/* ---------- Bottom Navigation ---------- */
+/* ================= BOTTOM NAV ================= */
 
 .bottom-nav {
     position: absolute;
@@ -1134,10 +1471,23 @@ input:focus-visible {
     right: 0;
     bottom: 0;
     z-index: 50;
-    padding: 8px 10px calc(8px + env(safe-area-inset-bottom));
-    background: rgba(255,253,248,.94);
+
+    height: calc(
+        var(--nav-height)
+        + env(safe-area-inset-bottom)
+    );
+
+    padding:
+        5px
+        10px
+        env(safe-area-inset-bottom);
+
+    background: rgba(255,253,248,.96);
     backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+
     border-top: 1px solid rgba(80,68,50,.08);
+
     display: grid;
     grid-template-columns: repeat(4,1fr);
 }
@@ -1163,22 +1513,33 @@ input:focus-visible {
     color: var(--red);
 }
 
-/* ---------- Toast ---------- */
+/* ================= TOAST ================= */
 
 .toast {
     position: fixed;
     z-index: 120;
     left: 50%;
-    bottom: 94px;
+    bottom: calc(
+        var(--nav-height)
+        + env(safe-area-inset-bottom)
+        + 20px
+    );
+
     transform: translateX(-50%) translateY(15px);
+
     background: #292621;
     color: white;
     padding: 10px 15px;
     border-radius: 999px;
     font-size: 11px;
+
     opacity: 0;
     pointer-events: none;
-    transition: opacity .2s, transform .2s;
+
+    transition:
+        opacity .2s,
+        transform .2s;
+
     white-space: nowrap;
 }
 
@@ -1187,7 +1548,7 @@ input:focus-visible {
     transform: translateX(-50%) translateY(0);
 }
 
-/* ---------- Recognition reveal ---------- */
+/* ================= REVEAL ================= */
 
 .reveal {
     transform-origin: top center;
@@ -1195,17 +1556,26 @@ input:focus-visible {
 }
 
 @keyframes revealCard {
+
     from {
         opacity: 0;
-        transform: perspective(700px) rotateX(-12deg) translateY(-8px);
+        transform:
+            perspective(700px)
+            rotateX(-12deg)
+            translateY(-8px);
     }
+
     to {
         opacity: 1;
-        transform: perspective(700px) rotateX(0) translateY(0);
+        transform:
+            perspective(700px)
+            rotateX(0)
+            translateY(0);
     }
 }
 
 @media (prefers-reduced-motion: reduce) {
+
     *,
     *::before,
     *::after {
@@ -1215,8 +1585,10 @@ input:focus-visible {
         scroll-behavior: auto !important;
     }
 }
+
 </style>
 </head>
+
 
 <body>
 
@@ -1225,14 +1597,30 @@ input:focus-visible {
     <div class="top-safe"></div>
 
     <!-- Header -->
+
     <header class="header">
+
         <div class="brand">
-            <div class="brand-mark">照</div>
-            <div class="brand-name">照食</div>
+
+            <div class="brand-mark">
+                照
+            </div>
+
+            <div class="brand-name">
+                照食
+            </div>
+
         </div>
 
-        <button class="header-action" aria-label="通知" onclick="showToast('今日已完成 2 餐記錄')">○</button>
+        <button
+            class="header-action"
+            aria-label="通知"
+            onclick="showToast('今日已完成 2 餐記錄')">
+            ○
+        </button>
+
     </header>
+
 
     <!-- ================= HOME ================= -->
 
@@ -1241,14 +1629,27 @@ input:focus-visible {
         <div class="page-padding">
 
             <div class="today-line">
+
                 <div>
-                    <div class="eyebrow">今日脈案 · 2026年9月28日</div>
-                    <div class="heat-status">今日偏熱氣，晚餐可以清淡啲</div>
+
+                    <div class="eyebrow">
+                        今日脈案 · 2026年9月28日
+                    </div>
+
+                    <div class="heat-status">
+                        今日偏熱氣，晚餐可以清淡啲
+                    </div>
+
                 </div>
-                <div class="today-date">星期一</div>
+
+                <div class="today-date">
+                    星期一
+                </div>
+
             </div>
 
         </div>
+
 
         <section class="home-hero">
 
@@ -1256,83 +1657,195 @@ input:focus-visible {
 
                 <div class="camera-ring"></div>
 
-                <button class="camera-button"
-                        aria-label="拍照分析食物"
-                        onclick="startRecognition()">
+                <!-- 整個圓形都是 button -->
 
-                    <div class="camera-icon">⌾</div>
-                    <div class="camera-text">照食</div>
-                    <div class="camera-sub">影低你準備食嘅嘢</div>
+                <button
+                    class="camera-button"
+                    aria-label="拍照分析食物"
+                    onclick="startAIAnalysis()">
+
+                    <div class="camera-icon">
+                        ⌾
+                    </div>
+
+                    <div class="camera-text">
+                        照食
+                    </div>
+
+                    <div class="camera-sub">
+                        影低你準備食嘅嘢
+                    </div>
 
                 </button>
 
             </div>
 
+
             <div class="hero-copy">
-                <strong>照樣食，食得更有數</strong>
-                <p>AI 幫你睇下今日呢餐對體質有咩影響</p>
+
+                <strong>
+                    照樣食，食得更有數
+                </strong>
+
+                <p>
+                    影低先，AI 幫你睇下呢餐點樣
+                </p>
+
             </div>
 
         </section>
 
+
+        <!-- Calories -->
+
         <div class="page-padding">
 
-            <div class="section-head">
-                <h2 class="section-title">今日已記錄</h2>
-                <button class="text-button" onclick="showToast('今日已記錄 2 餐')">全部 →</button>
+            <div class="calorie-summary card">
+
+                <div>
+
+                    <div class="eyebrow">
+                        今日卡路里
+                    </div>
+
+                    <div class="calorie-number">
+                        1,180
+                        <span> kcal</span>
+                    </div>
+
+                </div>
+
+                <div class="calorie-target">
+                    參考目標<br>
+                    2,000 kcal
+                </div>
+
+                <div class="calorie-progress">
+                    <div></div>
+                </div>
+
             </div>
+
+
+            <div class="section-head">
+
+                <h2 class="section-title">
+                    今日已記錄
+                </h2>
+
+                <button
+                    class="text-button"
+                    onclick="showToast('今日已記錄 2 餐')">
+                    全部 →
+                </button>
+
+            </div>
+
 
             <div class="meal-card card">
 
-                <div class="food-thumb">🍗</div>
+                <div class="food-thumb">
+                    🍗
+                </div>
 
                 <div>
+
                     <div class="meal-top">
-                        <div class="meal-name">脆皮燒雞</div>
-                        <span class="badge badge-warm">偏熱</span>
+
+                        <div class="meal-name">
+                            脆皮燒雞
+                        </div>
+
+                        <span class="badge badge-warm">
+                            偏熱
+                        </span>
+
                     </div>
 
-                    <div class="meal-time">午餐 · 12:42</div>
+                    <div class="meal-time">
+                        午餐 · 12:42
+                    </div>
+
+                    <div class="meal-calorie">
+                        約 420 kcal
+                    </div>
 
                     <div class="meal-advice">
                         好味，但今餐偏燥熱；下午飲多啲水，晚餐可以揀清爽啲。
                     </div>
+
                 </div>
 
             </div>
 
+
             <div class="meal-card card">
 
-                <div class="food-thumb">🥣</div>
+                <div class="food-thumb">
+                    🥣
+                </div>
 
                 <div>
+
                     <div class="meal-top">
-                        <div class="meal-name">魚片粥</div>
-                        <span class="badge badge-neutral">較平</span>
+
+                        <div class="meal-name">
+                            魚片粥
+                        </div>
+
+                        <span class="badge badge-neutral">
+                            較平
+                        </span>
+
                     </div>
 
-                    <div class="meal-time">早餐 · 08:21</div>
+                    <div class="meal-time">
+                        早餐 · 08:21
+                    </div>
+
+                    <div class="meal-calorie">
+                        約 360 kcal
+                    </div>
 
                     <div class="meal-advice">
                         整體較溫和，作為早餐幾舒服。
                     </div>
+
                 </div>
 
             </div>
 
+
             <div class="section-head">
-                <h2 class="section-title">本週照食印</h2>
-                <span class="stamp-count">4 / 7</span>
+
+                <h2 class="section-title">
+                    本週照食印
+                </h2>
+
+                <span class="stamp-count">
+                    4 / 7
+                </span>
+
             </div>
+
 
             <div class="stamp-card card">
 
                 <div class="stamp-head">
-                    <span class="eyebrow">連續記錄</span>
-                    <span style="font-size:11px;color:var(--muted)">再 3 日解鎖新邊框</span>
+
+                    <span class="eyebrow">
+                        連續記錄
+                    </span>
+
+                    <span style="font-size:11px;color:var(--muted)">
+                        再 3 日解鎖新邊框
+                    </span>
+
                 </div>
 
+
                 <div class="stamps">
+
                     <div class="stamp-day">
                         <div class="stamp done">照</div>
                         一
@@ -1367,15 +1880,87 @@ input:focus-visible {
                         <div class="stamp">7</div>
                         日
                     </div>
+
                 </div>
 
             </div>
 
         </div>
 
+
         <p class="disclaimer">
             照食分析僅供日常飲食及養生參考，不構成醫療診斷或治療建議。
         </p>
+
+    </main>
+
+
+    <!-- ================= AI ANALYSIS ================= -->
+
+    <main id="ai" class="screen">
+
+        <div class="ai-page">
+
+            <button
+                class="back-button"
+                onclick="showScreen('home')">
+                ← 返回
+            </button>
+
+            <div class="eyebrow">
+                照食 AI · 正在分析
+            </div>
+
+
+            <div class="ai-stage">
+
+                <div class="ai-food">
+                    🍗
+                </div>
+
+                <div class="ai-scan"></div>
+
+                <div class="ai-corners">
+
+                    <span class="tl"></span>
+                    <span class="tr"></span>
+                    <span class="bl"></span>
+                    <span class="br"></span>
+
+                </div>
+
+                <div
+                    class="ai-status"
+                    id="aiStatus">
+                    正在睇緊呢餐……
+                </div>
+
+            </div>
+
+
+            <div class="ai-steps">
+
+                <div
+                    class="ai-step active"
+                    id="aiStep1">
+                    食物辨識
+                </div>
+
+                <div
+                    class="ai-step"
+                    id="aiStep2">
+                    寒熱分析
+                </div>
+
+                <div
+                    class="ai-step"
+                    id="aiStep3">
+                    體質配搭
+                </div>
+
+            </div>
+
+        </div>
 
     </main>
 
@@ -1386,46 +1971,83 @@ input:focus-visible {
 
         <div class="recognition">
 
-            <button class="back-button" onclick="goHome()">← 返回</button>
+            <button
+                class="back-button"
+                onclick="goHome()">
+                ← 返回
+            </button>
 
-            <div class="eyebrow">AI 食材辨識 · Demo</div>
-
-            <div class="photo-preview" style="margin-top:8px">
-                <div class="food-art">🍗</div>
-                <div class="photo-corner">AI 已辨識</div>
+            <div class="eyebrow">
+                AI 食材辨識
             </div>
+
+
+            <div
+                class="photo-preview"
+                style="margin-top:8px">
+
+                <div
+                    class="food-art"
+                    id="recognitionFood">
+                    🍗
+                </div>
+
+                <div class="photo-corner">
+                    AI 已辨識
+                </div>
+
+            </div>
+
 
             <div class="analysis-card reveal">
 
                 <div class="analysis-section">
 
-                    <div class="analysis-label">食材辨識</div>
+                    <div class="analysis-label">
+                        食材辨識
+                    </div>
 
                     <div class="analysis-food">
 
                         <div>
-                            <div class="analysis-food-name">脆皮燒雞</div>
-                            <div class="chip-row" style="margin-top:9px">
 
-                                <button class="chip active editable-chip"
-                                        onclick="cycleFoodTag(this)">
+                            <div
+                                class="analysis-food-name"
+                                id="foodName">
+                                脆皮燒雞
+                            </div>
+
+                            <div
+                                class="chip-row"
+                                style="margin-top:9px">
+
+                                <button
+                                    class="chip active editable-chip"
+                                    onclick="cycleFoodTag(this)">
                                     燒製
                                 </button>
 
-                                <button class="chip editable-chip"
-                                        onclick="cycleFoodTag(this)">
+                                <button
+                                    class="chip editable-chip"
+                                    onclick="cycleFoodTag(this)">
                                     雞肉
                                 </button>
 
-                                <button class="chip editable-chip"
-                                        onclick="cycleFoodTag(this)">
+                                <button
+                                    class="chip editable-chip"
+                                    onclick="cycleFoodTag(this)">
                                     脆皮
                                 </button>
 
                             </div>
+
                         </div>
 
-                        <span class="badge badge-warm">偏熱</span>
+                        <span
+                            class="badge badge-warm"
+                            id="natureBadge">
+                            偏熱
+                        </span>
 
                     </div>
 
@@ -1434,24 +2056,38 @@ input:focus-visible {
 
                 <div class="analysis-section">
 
-                    <div class="analysis-label">屬性判斷</div>
+                    <div class="analysis-label">
+                        屬性判斷
+                    </div>
 
-                    <div style="display:flex;align-items:center;gap:12px">
+                    <div
+                        style="display:flex;align-items:center;gap:12px">
 
-                        <div style="font-family:'Noto Serif TC';font-size:28px;color:var(--warm)">
+                        <div
+                            style="font-family:'Noto Serif TC';font-size:28px;color:var(--warm)"
+                            id="natureText">
                             熱
                         </div>
 
                         <div style="flex:1">
 
-                            <div style="height:7px;background:#EEE8DF;border-radius:99px;overflow:hidden">
-                                <div style="width:76%;height:100%;background:var(--warm);border-radius:99px"></div>
+                            <div
+                                style="height:7px;background:#EEE8DF;border-radius:99px;overflow:hidden">
+
+                                <div
+                                    id="heatBar"
+                                    style="width:76%;height:100%;background:var(--warm);border-radius:99px">
+                                </div>
+
                             </div>
 
-                            <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--muted);margin-top:5px">
+                            <div
+                                style="display:flex;justify-content:space-between;font-size:9px;color:var(--muted);margin-top:5px">
+
                                 <span>偏寒</span>
                                 <span>較平</span>
                                 <span>偏熱</span>
+
                             </div>
 
                         </div>
@@ -1463,23 +2099,48 @@ input:focus-visible {
 
                 <div class="analysis-section">
 
-                    <div class="analysis-label">營養概覽 · 每份估算</div>
+                    <div class="analysis-label">
+                        營養概覽 · 每份估算
+                    </div>
 
                     <div class="nutrition">
 
                         <div class="nutrition-item">
-                            <span class="nutrition-value">420</span>
-                            <span class="nutrition-label">kcal</span>
+                            <span
+                                class="nutrition-value"
+                                id="calorieValue">
+                                420
+                            </span>
+                            <span class="nutrition-label">
+                                kcal
+                            </span>
                         </div>
 
                         <div class="nutrition-item">
-                            <span class="nutrition-value">29g</span>
-                            <span class="nutrition-label">蛋白質</span>
+                            <span class="nutrition-value">
+                                29g
+                            </span>
+                            <span class="nutrition-label">
+                                蛋白質
+                            </span>
                         </div>
 
                         <div class="nutrition-item">
-                            <span class="nutrition-value">24g</span>
-                            <span class="nutrition-label">脂肪</span>
+                            <span class="nutrition-value">
+                                24g
+                            </span>
+                            <span class="nutrition-label">
+                                脂肪
+                            </span>
+                        </div>
+
+                        <div class="nutrition-item">
+                            <span class="nutrition-value">
+                                18g
+                            </span>
+                            <span class="nutrition-label">
+                                碳水
+                            </span>
                         </div>
 
                     </div>
@@ -1489,21 +2150,76 @@ input:focus-visible {
 
                 <div class="analysis-section">
 
-                    <div class="analysis-label">體質相應建議</div>
+                    <div class="analysis-label">
+                        體質相應建議
+                    </div>
 
                     <div class="body-advice">
-                        你近期飲食呈現<strong>偏熱氣傾向</strong>，
-                        呢餐可以照食，但之後一餐建議揀清爽、少油炸嘅食物，
-                        幫身體保持平衡。
+                        你近期飲食呈現
+                        <strong>偏熱氣傾向</strong>，
+                        呢餐可以照食，但之後一餐建議揀清爽、少油炸嘅食物，幫身體保持平衡。
                     </div>
 
                 </div>
 
             </div>
 
-            <button class="recognize-button" onclick="confirmMeal()">
+
+            <button
+                class="recognize-button"
+                onclick="confirmMeal()">
                 確認呢餐，幫我記低
             </button>
+
+
+            <button
+                class="error-button"
+                onclick="openCorrection()">
+                認錯咗？修改食物
+            </button>
+
+
+            <div
+                class="edit-box"
+                id="editBox"
+                style="display:none">
+
+                <div class="edit-title">
+                    AI 認錯咗？
+                </div>
+
+                <div class="edit-sub">
+                    可以直接打字，或者撳咪講俾我知
+                </div>
+
+
+                <div class="edit-input-row">
+
+                    <input
+                        class="edit-input"
+                        id="editInput"
+                        type="text"
+                        placeholder="例如：唔係燒雞，係叉燒飯">
+
+                    <button
+                        class="voice-button"
+                        id="voiceButton"
+                        aria-label="語音修改"
+                        onclick="startVoiceInput()">
+                        🎙
+                    </button>
+
+                </div>
+
+
+                <button
+                    class="edit-submit"
+                    onclick="submitCorrection()">
+                    重新辨識
+                </button>
+
+            </div>
+
 
             <p class="disclaimer">
                 AI 分析根據食物圖片及模擬體質資料作出，僅供日常參考，不構成醫療診斷或治療建議。
@@ -1520,18 +2236,33 @@ input:focus-visible {
 
         <div class="result-page">
 
-            <button class="back-button" onclick="showScreen('recognition')">← 返回</button>
+            <button
+                class="back-button"
+                onclick="showScreen('recognition')">
+                ← 返回
+            </button>
 
-            <div class="eyebrow">照食修圖 · 今日第 3 餐</div>
+            <div class="eyebrow">
+                照食修圖 · 今日第 3 餐
+            </div>
 
-            <div class="result-photo" style="margin-top:8px">
 
-                <div class="result-food">🍗</div>
+            <div
+                class="result-photo"
+                style="margin-top:8px">
+
+                <div
+                    class="result-food"
+                    id="resultFood">
+                    🍗
+                </div>
 
                 <div class="result-overlay">
 
-                    <div class="result-copy">
-                        燒雞好味！<br>
+                    <div
+                        class="result-copy"
+                        id="resultCopy">
+                        燒雞好味！
                         但好熱氣！
                     </div>
 
@@ -1543,19 +2274,23 @@ input:focus-visible {
 
             </div>
 
+
             <div class="result-actions">
 
-                <button class="result-action"
-                        onclick="showToast('已模擬分享圖片')">
+                <button
+                    class="result-action"
+                    onclick="showToast('已模擬分享圖片')">
                     ↗ 分享
                 </button>
 
-                <button class="result-action primary"
-                        onclick="openShop()">
+                <button
+                    class="result-action primary"
+                    onclick="openShop()">
                     睇下點配 →
                 </button>
 
             </div>
+
 
             <p class="disclaimer">
                 修圖文案為日常體感描述，僅供娛樂及飲食記錄參考。
@@ -1572,20 +2307,28 @@ input:focus-visible {
 
         <div class="report-header">
 
-            <div class="eyebrow">飲食 Report</div>
-            <h1 class="section-title" style="font-size:26px;margin-top:4px">
+            <div class="eyebrow">
+                飲食 Report
+            </div>
+
+            <h1
+                class="section-title"
+                style="font-size:26px;margin-top:4px">
                 最近食成點？
             </h1>
 
+
             <div class="period-switch">
 
-                <button class="period-btn active"
-                        onclick="switchPeriod(this,'week')">
+                <button
+                    class="period-btn active"
+                    onclick="switchPeriod(this,'week')">
                     本週
                 </button>
 
-                <button class="period-btn"
-                        onclick="switchPeriod(this,'month')">
+                <button
+                    class="period-btn"
+                    onclick="switchPeriod(this,'month')">
                     本月
                 </button>
 
@@ -1594,62 +2337,163 @@ input:focus-visible {
         </div>
 
 
+        <!-- Calories -->
+
         <div class="report-card card">
 
-            <div class="chart-title">寒熱分布</div>
+            <div class="chart-title">
+                卡路里概覽
+            </div>
+
+            <div class="calorie-report">
+
+                <div class="calorie-box">
+
+                    <div class="calorie-box-value">
+                        1,680
+                    </div>
+
+                    <div class="calorie-box-label">
+                        每日平均 kcal
+                    </div>
+
+                </div>
+
+                <div class="calorie-box">
+
+                    <div class="calorie-box-value">
+                        2,000
+                    </div>
+
+                    <div class="calorie-box-label">
+                        參考每日目標 kcal
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="calorie-bar">
+                <div></div>
+            </div>
+
+            <div class="chart-summary">
+                本週平均攝取量約為參考目標的 84%。實際需要量會因年齡、性別、身高、體重及活動量而不同。
+            </div>
+
+        </div>
+
+
+        <!-- Heat chart -->
+
+        <div class="report-card card">
+
+            <div class="chart-title">
+                寒熱分布
+            </div>
 
             <div class="chart-wrap">
 
-                <svg viewBox="0 0 350 145"
-                     width="100%"
-                     height="100%"
-                     role="img"
-                     aria-label="本週飲食寒熱分布：偏熱 42%，較平 38%，偏寒 20%">
+                <svg
+                    viewBox="0 0 350 145"
+                    width="100%"
+                    height="100%"
+                    role="img"
+                    aria-label="本週飲食寒熱分布：偏熱42%，較平38%，偏寒20%">
 
-                    <line x1="30" y1="15" x2="30" y2="120"
-                          stroke="#DED7CC" stroke-width="1"/>
+                    <line
+                        x1="30"
+                        y1="15"
+                        x2="30"
+                        y2="120"
+                        stroke="#DED7CC"
+                        stroke-width="1"/>
 
-                    <line x1="30" y1="120" x2="330" y2="120"
-                          stroke="#DED7CC" stroke-width="1"/>
+                    <line
+                        x1="30"
+                        y1="120"
+                        x2="330"
+                        y2="120"
+                        stroke="#DED7CC"
+                        stroke-width="1"/>
 
-                    <rect x="60" y="58" width="48" height="62"
-                          rx="8" fill="#B75A35"/>
+                    <rect
+                        x="60"
+                        y="58"
+                        width="48"
+                        height="62"
+                        rx="8"
+                        fill="#B75A35"/>
 
-                    <rect x="150" y="65" width="48" height="55"
-                          rx="8" fill="#A9A18E"/>
+                    <rect
+                        x="150"
+                        y="65"
+                        width="48"
+                        height="55"
+                        rx="8"
+                        fill="#A9A18E"/>
 
-                    <rect x="240" y="86" width="48" height="34"
-                          rx="8" fill="#607D91"/>
+                    <rect
+                        x="240"
+                        y="86"
+                        width="48"
+                        height="34"
+                        rx="8"
+                        fill="#607D91"/>
 
-                    <text x="84" y="51"
-                          text-anchor="middle"
-                          font-size="11"
-                          fill="#6D665D">42%</text>
+                    <text
+                        x="84"
+                        y="51"
+                        text-anchor="middle"
+                        font-size="11"
+                        fill="#6D665D">
+                        42%
+                    </text>
 
-                    <text x="174" y="58"
-                          text-anchor="middle"
-                          font-size="11"
-                          fill="#6D665D">38%</text>
+                    <text
+                        x="174"
+                        y="58"
+                        text-anchor="middle"
+                        font-size="11"
+                        fill="#6D665D">
+                        38%
+                    </text>
 
-                    <text x="264" y="79"
-                          text-anchor="middle"
-                          font-size="11"
-                          fill="#6D665D">20%</text>
+                    <text
+                        x="264"
+                        y="79"
+                        text-anchor="middle"
+                        font-size="11"
+                        fill="#6D665D">
+                        20%
+                    </text>
 
-                    <text x="84" y="137"
-                          text-anchor="middle"
-                          font-size="10"
-                          fill="#858078">偏熱</text>
+                    <text
+                        x="84"
+                        y="137"
+                        text-anchor="middle"
+                        font-size="10"
+                        fill="#858078">
+                        偏熱
+                    </text>
 
-                    <text x="174" y="137"
-                          text-anchor="middle"
-                          font-size="10"
-                          fill="#858078">較平</text>
+                    <text
+                        x="174"
+                        y="137"
+                        text-anchor="middle"
+                        font-size="10"
+                        fill="#858078">
+                        較平
+                    </text>
 
-                    <text x="264" y="137"
-                          text-anchor="middle"
-                          font-size="10"
-                          fill="#858078">偏寒</text>
+                    <text
+                        x="264"
+                        y="137"
+                        text-anchor="middle"
+                        font-size="10"
+                        fill="#858078">
+                        偏寒
+                    </text>
 
                 </svg>
 
@@ -1662,102 +2506,134 @@ input:focus-visible {
         </div>
 
 
+        <!-- Spectrum -->
+
         <div class="report-card card">
 
-            <div class="chart-title">高頻出現食物</div>
-
-            <div class="offender">
-
-                <div class="offender-icon">🌶️</div>
-
-                <div>
-                    <div class="offender-name">辣味食物</div>
-                    <div class="offender-desc">本週出現 4 次 · 偏熱氣</div>
-                </div>
-
-                <button class="shop-link" onclick="openShop()">
-                    配搭 →
-                </button>
-
+            <div class="chart-title">
+                你最近嘅體質傾向
             </div>
 
-            <div class="offender">
+            <div class="report-spectrum">
 
-                <div class="offender-icon">🍗</div>
+                <div class="report-spectrum-line"></div>
 
-                <div>
-                    <div class="offender-name">燒烤類</div>
-                    <div class="offender-desc">本週出現 3 次 · 偏燥熱</div>
+                <div
+                    class="report-spectrum-point"
+                    aria-label="目前較接近濕熱方向">
                 </div>
 
-                <button class="shop-link" onclick="openShop()">
-                    配搭 →
-                </button>
+                <div class="report-spectrum-labels">
 
-            </div>
+                    <span>平和</span>
+                    <span>氣虛</span>
+                    <span>陽虛</span>
+                    <span>陰虛</span>
+                    <span>痰濕</span>
+                    <span>濕熱</span>
+                    <span>血瘀</span>
+                    <span>氣鬱</span>
+                    <span>特稟</span>
 
-            <div class="offender">
-
-                <div class="offender-icon">🧋</div>
-
-                <div>
-                    <div class="offender-name">甜飲</div>
-                    <div class="offender-desc">本週出現 3 次 · 注意日常攝取</div>
                 </div>
 
-                <button class="shop-link" onclick="openShop()">
-                    配搭 →
-                </button>
+                <div class="report-spectrum-note">
+                    近期飲食呈現偏熱氣傾向，但唔代表固定體質。
+                    光譜會隨日常飲食資料及問卷更新。
+                </div>
 
             </div>
 
         </div>
 
 
-        <div class="report-card card trend-card">
+        <!-- Food frequency -->
 
-            <div class="chart-title">體質傾向趨勢</div>
+        <div class="report-card card">
 
-            <svg viewBox="0 0 350 145"
-                 width="100%"
-                 height="145"
-                 role="img"
-                 aria-label="近期飲食偏熱氣傾向由較高逐步下降">
+            <div class="chart-title">
+                高頻出現食物
+            </div>
 
-                <line x1="30" y1="15" x2="30" y2="120"
-                      stroke="#DED7CC"/>
 
-                <line x1="30" y1="120" x2="330" y2="120"
-                      stroke="#DED7CC"/>
+            <div class="offender">
 
-                <polyline
-                    points="40,42 90,50 140,67 190,61 240,77 290,82 320,70"
-                    fill="none"
-                    stroke="#A33A32"
-                    stroke-width="3"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"/>
+                <div class="offender-icon">
+                    🌶️
+                </div>
 
-                <circle cx="40" cy="42" r="4" fill="#A33A32"/>
-                <circle cx="90" cy="50" r="4" fill="#A33A32"/>
-                <circle cx="140" cy="67" r="4" fill="#A33A32"/>
-                <circle cx="190" cy="61" r="4" fill="#A33A32"/>
-                <circle cx="240" cy="77" r="4" fill="#A33A32"/>
-                <circle cx="290" cy="82" r="4" fill="#A33A32"/>
-                <circle cx="320" cy="70" r="4" fill="#A33A32"/>
+                <div>
 
-                <text x="40" y="137" font-size="9" fill="#858078">一</text>
-                <text x="90" y="137" font-size="9" fill="#858078">二</text>
-                <text x="140" y="137" font-size="9" fill="#858078">三</text>
-                <text x="190" y="137" font-size="9" fill="#858078">四</text>
-                <text x="240" y="137" font-size="9" fill="#858078">五</text>
-                <text x="290" y="137" font-size="9" fill="#858078">六</text>
-                <text x="320" y="137" font-size="9" fill="#858078">日</text>
+                    <div class="offender-name">
+                        辣味食物
+                    </div>
 
-            </svg>
+                    <div class="offender-desc">
+                        本週出現 4 次 · 偏熱氣
+                    </div>
 
-            <div class="chart-summary">
-                文字摘要：近期偏熱氣傾向有輕微下降，仍建議留意燒烤及辛辣食物頻率。
+                </div>
+
+                <button
+                    class="shop-link"
+                    onclick="openShop()">
+                    配搭 →
+                </button>
+
+            </div>
+
+
+            <div class="offender">
+
+                <div class="offender-icon">
+                    🍗
+                </div>
+
+                <div>
+
+                    <div class="offender-name">
+                        燒烤類
+                    </div>
+
+                    <div class="offender-desc">
+                        本週出現 3 次 · 偏燥熱
+                    </div>
+
+                </div>
+
+                <button
+                    class="shop-link"
+                    onclick="openShop()">
+                    配搭 →
+                </button>
+
+            </div>
+
+
+            <div class="offender">
+
+                <div class="offender-icon">
+                    🧋
+                </div>
+
+                <div>
+
+                    <div class="offender-name">
+                        甜飲
+                    </div>
+
+                    <div class="offender-desc">
+                        本週出現 3 次 · 注意日常攝取
+                    </div>
+
+                </div>
+
+                <button
+                    class="shop-link"
+                    onclick="openShop()">
+                    配搭 →
+                </button>
+
             </div>
 
         </div>
@@ -1776,12 +2652,16 @@ input:focus-visible {
 
         <div class="shop-header">
 
-            <div class="eyebrow">照食商城 · 食品</div>
+            <div class="eyebrow">
+                照食 · 食補
+            </div>
 
-            <h1 class="section-title"
+            <h1
+                class="section-title"
                 style="font-size:27px;margin-top:4px">
-                為您推薦
+                為你配好
             </h1>
+
 
             <div class="shop-hero">
 
@@ -1791,7 +2671,7 @@ input:focus-visible {
 
                 <div class="shop-hero-copy">
                     根據你最近飲食呈現嘅偏熱氣傾向，
-                    幫你揀咗幾款日常食療食品。
+                    幫你揀咗幾款日常食品。
                 </div>
 
             </div>
@@ -1803,23 +2683,27 @@ input:focus-visible {
 
             <div class="category-scroll">
 
-                <button class="category"
-                        onclick="showToast('已切換：體質相應')">
-                    體質相應
+                <button
+                    class="category"
+                    onclick="showToast('已切換：為你推薦')">
+                    為你推薦
                 </button>
 
-                <button class="category"
-                        onclick="showToast('已切換：湯包')">
+                <button
+                    class="category"
+                    onclick="showToast('已切換：湯包')">
                     湯包
                 </button>
 
-                <button class="category"
-                        onclick="showToast('已切換：養生茶')">
+                <button
+                    class="category"
+                    onclick="showToast('已切換：養生茶')">
                     養生茶
                 </button>
 
-                <button class="category"
-                        onclick="showToast('已切換：營養食品')">
+                <button
+                    class="category"
+                    onclick="showToast('已切換：營養食品')">
                     營養食品
                 </button>
 
@@ -1830,30 +2714,36 @@ input:focus-visible {
 
         <div class="product-list">
 
+
             <div class="product-card card">
 
-                <div class="product-image">🍵</div>
+                <div class="product-image">
+                    🍵
+                </div>
 
                 <div class="product-info">
 
                     <div class="chip-row">
 
-                        <span class="badge badge-food">食品</span>
+                        <span class="badge badge-food">
+                            食品
+                        </span>
 
                         <span class="badge badge-neutral">
-                            執業中醫師設計
+                            中醫師設計
                         </span>
 
                     </div>
 
-                    <div class="product-title"
-                         style="margin-top:8px">
+                    <div
+                        class="product-title"
+                        style="margin-top:8px">
                         清潤日常湯包
                     </div>
 
                     <div class="product-reason">
-                        為何適合您：近期飲食偏熱氣，
-                        可作日常清爽飲食搭配。
+                        為何適合你：近期飲食偏熱氣，
+                        可以作為日常清爽飲食搭配。
                     </div>
 
                     <div class="product-bottom">
@@ -1862,8 +2752,9 @@ input:focus-visible {
                             HK$68
                         </div>
 
-                        <button class="add-button"
-                                onclick="addCart('清潤日常湯包')">
+                        <button
+                            class="add-button"
+                            onclick="addCart('清潤日常湯包')">
                             加入購物袋
                         </button>
 
@@ -1876,27 +2767,32 @@ input:focus-visible {
 
             <div class="product-card card">
 
-                <div class="product-image">🌿</div>
+                <div class="product-image">
+                    🌿
+                </div>
 
                 <div class="product-info">
 
                     <div class="chip-row">
 
-                        <span class="badge badge-food">食品</span>
+                        <span class="badge badge-food">
+                            食品
+                        </span>
 
                         <span class="badge badge-neutral">
-                            執業中醫師設計
+                            中醫師設計
                         </span>
 
                     </div>
 
-                    <div class="product-title"
-                         style="margin-top:8px">
+                    <div
+                        class="product-title"
+                        style="margin-top:8px">
                         日常輕養茶
                     </div>
 
                     <div class="product-reason">
-                        為何適合您：配合近期飲食節奏，
+                        為何適合你：配合近期飲食節奏，
                         適合平日作為無糖飲品選擇。
                     </div>
 
@@ -1906,8 +2802,9 @@ input:focus-visible {
                             HK$48
                         </div>
 
-                        <button class="add-button"
-                                onclick="addCart('日常輕養茶')">
+                        <button
+                            class="add-button"
+                            onclick="addCart('日常輕養茶')">
                             加入購物袋
                         </button>
 
@@ -1920,27 +2817,32 @@ input:focus-visible {
 
             <div class="product-card card">
 
-                <div class="product-image">🥣</div>
+                <div class="product-image">
+                    🥣
+                </div>
 
                 <div class="product-info">
 
                     <div class="chip-row">
 
-                        <span class="badge badge-food">食品</span>
+                        <span class="badge badge-food">
+                            食品
+                        </span>
 
                         <span class="badge badge-neutral">
-                            執業中醫師設計
+                            中醫師設計
                         </span>
 
                     </div>
 
-                    <div class="product-title"
-                         style="margin-top:8px">
+                    <div
+                        class="product-title"
+                        style="margin-top:8px">
                         暖胃輕食湯
                     </div>
 
                     <div class="product-reason">
-                        為何適合您：如果下一餐想食得舒服啲，
+                        為何適合你：如果下一餐想食得舒服啲，
                         可以選擇較溫和嘅湯品。
                     </div>
 
@@ -1950,8 +2852,9 @@ input:focus-visible {
                             HK$72
                         </div>
 
-                        <button class="add-button"
-                                onclick="addCart('暖胃輕食湯')">
+                        <button
+                            class="add-button"
+                            onclick="addCart('暖胃輕食湯')">
                             加入購物袋
                         </button>
 
@@ -1979,52 +2882,20 @@ input:focus-visible {
 
             <div class="profile-head">
 
-                <div class="avatar">照</div>
+                <div class="avatar">
+                    照
+                </div>
 
                 <div>
-                    <div class="profile-name">Leo</div>
+
+                    <div class="profile-name">
+                        Leo
+                    </div>
+
                     <div class="profile-sub">
                         已連續記錄 4 日 · 共 28 餐
                     </div>
-                </div>
 
-            </div>
-
-
-            <div class="spectrum-card card">
-
-                <div class="eyebrow">我的體質光譜</div>
-
-                <div class="section-title"
-                     style="margin-top:4px">
-                    平和 ←→ 偏熱氣
-                </div>
-
-                <div class="spectrum">
-
-                    <div class="spectrum-line"></div>
-
-                    <div class="spectrum-point"
-                         aria-label="目前位置偏向濕熱"></div>
-
-                    <div class="spectrum-labels">
-                        <span>平和</span>
-                        <span>氣虛</span>
-                        <span>陽虛</span>
-                        <span>陰虛</span>
-                        <span>痰濕</span>
-                        <span>濕熱</span>
-                        <span>血瘀</span>
-                        <span>氣鬱</span>
-                        <span>特稟</span>
-                    </div>
-
-                </div>
-
-                <div class="spectrum-note">
-                    <strong>近期飲食傾向：</strong>
-                    偏熱氣較明顯。體質光譜會隨日常飲食及問卷更新，
-                    唔會以單一標籤定義你。
                 </div>
 
             </div>
@@ -2032,81 +2903,111 @@ input:focus-visible {
 
             <div class="menu-list">
 
-                <button class="menu-item"
-                        onclick="openQuestionnaire()">
+                <button
+                    class="menu-item"
+                    onclick="openQuestionnaire()">
 
                     <div class="menu-left">
 
-                        <span class="menu-icon">?</span>
+                        <span class="menu-icon">
+                            ?
+                        </span>
 
                         <span>
                             快速體質問卷
-                            <small style="display:block;color:#999;font-size:9px;margin-top:2px">
+
+                            <small
+                                style="display:block;color:#999;font-size:9px;margin-top:2px">
                                 約 1 分鐘完成
                             </small>
+
                         </span>
 
                     </div>
 
-                    <span class="arrow">›</span>
+                    <span class="arrow">
+                        ›
+                    </span>
 
                 </button>
 
 
-                <button class="menu-item"
-                        onclick="showToast('隱私設定 Demo')">
+                <button
+                    class="menu-item"
+                    onclick="showToast('隱私設定 Demo')">
 
                     <div class="menu-left">
 
-                        <span class="menu-icon">⌁</span>
+                        <span class="menu-icon">
+                            ⌁
+                        </span>
 
-                        <span>隱私與同意設定</span>
+                        <span>
+                            隱私與同意設定
+                        </span>
 
                     </div>
 
-                    <span class="arrow">›</span>
+                    <span class="arrow">
+                        ›
+                    </span>
 
                 </button>
 
 
-                <button class="menu-item"
-                        onclick="showToast('通知設定 Demo')">
+                <button
+                    class="menu-item"
+                    onclick="showToast('通知設定 Demo')">
 
                     <div class="menu-left">
 
-                        <span class="menu-icon">○</span>
+                        <span class="menu-icon">
+                            ○
+                        </span>
 
-                        <span>通知設定</span>
+                        <span>
+                            通知設定
+                        </span>
 
                     </div>
 
-                    <span class="arrow">›</span>
+                    <span class="arrow">
+                        ›
+                    </span>
 
                 </button>
 
 
-                <button class="menu-item"
-                        onclick="showToast('關於照食 Demo')">
+                <button
+                    class="menu-item"
+                    onclick="showToast('關於照食 Demo')">
 
                     <div class="menu-left">
 
-                        <span class="menu-icon">i</span>
+                        <span class="menu-icon">
+                            i
+                        </span>
 
-                        <span>關於照食</span>
+                        <span>
+                            關於照食
+                        </span>
 
                     </div>
 
-                    <span class="arrow">›</span>
+                    <span class="arrow">
+                        ›
+                    </span>
 
                 </button>
 
             </div>
 
 
-            <p class="disclaimer"
-                 style="margin-left:0;margin-right:0">
+            <p
+                class="disclaimer"
+                style="margin-left:0;margin-right:0">
 
-                體質光譜及飲食分析僅供日常參考，
+                體質及飲食分析僅供日常參考，
                 不構成醫療診斷或治療建議。
             </p>
 
@@ -2115,43 +3016,72 @@ input:focus-visible {
     </main>
 
 
-    <!-- Bottom Navigation -->
+    <!-- ================= BOTTOM NAV ================= -->
 
-    <nav class="bottom-nav" aria-label="主要導航">
+    <nav
+        class="bottom-nav"
+        aria-label="主要導航">
 
-        <button class="nav-item active"
-                data-screen="home"
-                onclick="showScreen('home')">
+        <button
+            class="nav-item active"
+            data-screen="home"
+            onclick="showScreen('home')">
 
-            <span class="nav-icon">⌂</span>
-            <span>首頁</span>
+            <span class="nav-icon">
+                ⌂
+            </span>
 
-        </button>
-
-        <button class="nav-item"
-                data-screen="report"
-                onclick="showScreen('report')">
-
-            <span class="nav-icon">◫</span>
-            <span>Report</span>
-
-        </button>
-
-        <button class="nav-item"
-                data-screen="shop"
-                onclick="showScreen('shop')">
-
-            <span class="nav-icon">♢</span>
-            <span>商城</span>
+            <span>
+                首頁
+            </span>
 
         </button>
 
-        <button class="nav-item"
-                data-screen="profile"
-                onclick="showScreen('profile')">
 
-            <span class="nav-icon">○</span>
-            <span>我的</span>
+        <button
+            class="nav-item"
+            data-screen="report"
+            onclick="showScreen('report')">
+
+            <span class="nav-icon">
+                ◫
+            </span>
+
+            <span>
+                Report
+            </span>
+
+        </button>
+
+
+        <button
+            class="nav-item"
+            data-screen="shop"
+            onclick="showScreen('shop')">
+
+            <span class="nav-icon">
+                ♢
+            </span>
+
+            <span>
+                食補
+            </span>
+
+        </button>
+
+
+        <button
+            class="nav-item"
+            data-screen="profile"
+            onclick="showScreen('profile')">
+
+            <span class="nav-icon">
+                ○
+            </span>
+
+            <span>
+                我的
+            </span>
 
         </button>
 
@@ -2160,11 +3090,12 @@ input:focus-visible {
 </div>
 
 
-<!-- Stamp Overlay -->
+<!-- ================= STAMP ================= -->
 
-<div class="stamp-overlay"
-     id="stampOverlay"
-     onclick="closeStamp()">
+<div
+    class="stamp-overlay"
+    id="stampOverlay"
+    onclick="closeStamp()">
 
     <div class="big-stamp">
         照<br>食
@@ -2173,30 +3104,34 @@ input:focus-visible {
 </div>
 
 
-<!-- Questionnaire Modal -->
+<!-- ================= QUESTIONNAIRE ================= -->
 
-<div class="modal"
-     id="questionModal">
+<div
+    class="modal"
+    id="questionModal">
 
     <div class="modal-sheet">
 
         <div class="modal-handle"></div>
 
-        <div class="question-progress"
-             id="questionProgress">
+        <div
+            class="question-progress"
+            id="questionProgress">
             第 1 / 4 題
         </div>
 
-        <div class="question-title"
-             id="questionTitle">
+        <div
+            class="question-title"
+            id="questionTitle">
             平時食完辣嘢，你比較容易？
         </div>
 
         <div id="answerList"></div>
 
-        <button class="question-next"
-                id="questionNext"
-                onclick="nextQuestion()">
+        <button
+            class="question-next"
+            id="questionNext"
+            onclick="nextQuestion()">
             下一題
         </button>
 
@@ -2205,135 +3140,462 @@ input:focus-visible {
 </div>
 
 
-<div class="toast" id="toast"></div>
+<div
+    class="toast"
+    id="toast">
+</div>
 
 
 <script>
 
 /* =========================================================
    Mock Data
-   將來接 API 時，可以將這部分替換成 API response。
 ========================================================= */
 
-const mockFood = {
-    name: "脆皮燒雞",
-    tags: ["燒製", "雞肉", "脆皮"],
-    nature: "偏熱",
-    heatScore: 76,
-    calories: "420",
-    protein: "29g",
-    fat: "24g",
-    advice: "你近期飲食呈現偏熱氣傾向，呢餐可以照食，但之後一餐建議揀清爽、少油炸嘅食物，幫身體保持平衡。",
-    slogan: "燒雞好味！\n但好熱氣！"
+const foods = {
+
+    chicken: {
+        name: "脆皮燒雞",
+        emoji: "🍗",
+        nature: "偏熱",
+        natureText: "熱",
+        heatScore: 76,
+        calories: 420,
+        protein: "29g",
+        fat: "24g",
+        carbs: "18g",
+        advice:
+            "你近期飲食呈現偏熱氣傾向，呢餐可以照食，但之後一餐建議揀清爽、少油炸嘅食物，幫身體保持平衡。",
+        slogan:
+            "燒雞好味！\n但好熱氣！"
+    },
+
+    charsiu: {
+        name: "叉燒飯",
+        emoji: "🍚",
+        nature: "偏熱",
+        natureText: "熱",
+        heatScore: 70,
+        calories: 580,
+        protein: "25g",
+        fat: "21g",
+        carbs: "69g",
+        advice:
+            "叉燒飯整體較濃味，今日如果已經食咗幾餐偏熱食物，下一餐可以清淡啲。",
+        slogan:
+            "叉燒飯真係香！\n但今日唔好再咁重口味喇。"
+    },
+
+    hotpot: {
+        name: "麻辣火鍋",
+        emoji: "🍲",
+        nature: "偏熱",
+        natureText: "熱",
+        heatScore: 90,
+        calories: 760,
+        protein: "35g",
+        fat: "43g",
+        carbs: "46g",
+        advice:
+            "麻辣火鍋辛辣及油脂較高，今日可以照食，但之後幾餐建議揀清爽啲。",
+        slogan:
+            "麻辣火鍋太爽！\n不過真係幾熱氣。"
+    }
+
 };
 
-const questions = [
-    {
-        title: "平時食完辣嘢，你比較容易？",
-        answers: [
-            "覺得口乾、想飲水",
-            "冇乜特別感覺",
-            "反而覺得幾舒服",
-            "平時少食辣，唔清楚"
-        ]
-    },
-    {
-        title: "你平時最容易想食邊類食物？",
-        answers: [
-            "香辣、燒烤",
-            "甜食、奶茶",
-            "清淡湯水",
-            "冰凍飲品"
-        ]
-    },
-    {
-        title: "平時飲水習慣比較似？",
-        answers: [
-            "成日都想飲",
-            "口渴先飲",
-            "習慣少量多次",
-            "每日飲得唔多"
-        ]
-    },
-    {
-        title: "最近飲食節奏點樣？",
-        answers: [
-            "比較多外賣",
-            "三餐算規律",
-            "有時忙到唔記得食",
-            "最近開始留意飲食"
-        ]
-    }
-];
+let currentFood = foods.chicken;
 
 let currentQuestion = 0;
 let selectedAnswer = null;
+
 let stampTimer = null;
+let aiTimer = null;
 
 
 /* =========================================================
-   Screen Navigation
+   Screen
 ========================================================= */
 
-function showScreen(screenId) {
+function showScreen(id) {
 
-    document.querySelectorAll(".screen").forEach(screen => {
-        screen.classList.remove("active");
-    });
+    document
+        .querySelectorAll(".screen")
+        .forEach(screen => {
+            screen.classList.remove("active");
+        });
 
-    const target = document.getElementById(screenId);
+    const target =
+        document.getElementById(id);
 
     if (target) {
+
         target.classList.add("active");
+
         target.scrollTop = 0;
+
     }
 
-    document.querySelectorAll(".nav-item").forEach(item => {
-        item.classList.toggle(
-            "active",
-            item.dataset.screen === screenId
-        );
-    });
-}
+    document
+        .querySelectorAll(".nav-item")
+        .forEach(item => {
 
+            item.classList.toggle(
+                "active",
+                item.dataset.screen === id
+            );
 
-function goHome() {
-    showScreen("home");
+        });
+
 }
 
 
 /* =========================================================
-   Camera / AI Recognition Flow
+   AI Analysis Animation
 ========================================================= */
 
-function startRecognition() {
+function startAIAnalysis() {
 
-    showScreen("recognition");
+    clearTimeout(aiTimer);
 
-    const card = document.querySelector("#recognition .analysis-card");
+    showScreen("ai");
 
-    card.classList.remove("reveal");
+    const status =
+        document.getElementById("aiStatus");
 
-    requestAnimationFrame(() => {
-        card.classList.add("reveal");
-    });
+    const step1 =
+        document.getElementById("aiStep1");
 
-    showToast("AI 正在辨識你的食物…");
+    const step2 =
+        document.getElementById("aiStep2");
+
+    const step3 =
+        document.getElementById("aiStep3");
+
+    step1.className = "ai-step active";
+    step2.className = "ai-step";
+    step3.className = "ai-step";
+
+    status.textContent =
+        "正在睇緊呢餐……";
+
+
+    setTimeout(() => {
+
+        step1.className =
+            "ai-step done";
+
+        step2.className =
+            "ai-step active";
+
+        status.textContent =
+            "正在分析寒熱屬性……";
+
+    }, 1200);
+
+
+    setTimeout(() => {
+
+        step2.className =
+            "ai-step done";
+
+        step3.className =
+            "ai-step active";
+
+        status.textContent =
+            "正在睇你近期飲食……";
+
+    }, 2400);
+
+
+    setTimeout(() => {
+
+        step3.className =
+            "ai-step done";
+
+        status.textContent =
+            "分析完成";
+
+    }, 3500);
+
+
+    aiTimer = setTimeout(() => {
+
+        renderRecognition();
+
+        showScreen("recognition");
+
+    }, 4000);
 
 }
 
+
+/* =========================================================
+   Render Recognition
+========================================================= */
+
+function renderRecognition() {
+
+    document.getElementById("recognitionFood")
+        .textContent = currentFood.emoji;
+
+    document.getElementById("foodName")
+        .textContent = currentFood.name;
+
+    document.getElementById("natureBadge")
+        .textContent = currentFood.nature;
+
+    document.getElementById("natureText")
+        .textContent = currentFood.natureText;
+
+    document.getElementById("heatBar")
+        .style.width =
+        currentFood.heatScore + "%";
+
+    document.getElementById("calorieValue")
+        .textContent =
+        currentFood.calories;
+
+    document.querySelector(".body-advice")
+        .innerHTML =
+        "你近期飲食呈現<strong>偏熱氣傾向</strong>，"
+        + currentFood.advice;
+
+    document
+        .querySelectorAll(".editable-chip")
+        .forEach((button,index) => {
+
+            if (currentFood === foods.charsiou) {
+
+                const values = [
+                    "飯類",
+                    "叉燒",
+                    "濃味"
+                ];
+
+                button.textContent =
+                    values[index];
+
+            } else if (currentFood === foods.hotpot) {
+
+                const values = [
+                    "火鍋",
+                    "辛辣",
+                    "湯底"
+                ];
+
+                button.textContent =
+                    values[index];
+
+            } else {
+
+                const values = [
+                    "燒製",
+                    "雞肉",
+                    "脆皮"
+                ];
+
+                button.textContent =
+                    values[index];
+
+            }
+
+        });
+
+}
+
+
+/* =========================================================
+   Correction
+========================================================= */
+
+function openCorrection() {
+
+    const box =
+        document.getElementById("editBox");
+
+    box.style.display =
+        box.style.display === "none"
+            ? "block"
+            : "none";
+
+    if (box.style.display === "block") {
+
+        setTimeout(() => {
+
+            document
+                .getElementById("editInput")
+                .focus();
+
+        }, 100);
+
+    }
+
+}
+
+
+/* =========================================================
+   Voice Recognition
+========================================================= */
+
+function startVoiceInput() {
+
+    const button =
+        document.getElementById("voiceButton");
+
+    const input =
+        document.getElementById("editInput");
+
+
+    if (!("webkitSpeechRecognition" in window)) {
+
+        input.value =
+            "唔係燒雞，係叉燒飯";
+
+        showToast(
+            "此瀏覽器未支援語音，已放入示範文字"
+        );
+
+        return;
+
+    }
+
+
+    const recognition =
+        new webkitSpeechRecognition();
+
+    recognition.lang = "zh-HK";
+
+    recognition.interimResults = false;
+
+    recognition.maxAlternatives = 1;
+
+
+    button.classList.add(
+        "voice-listening"
+    );
+
+    button.textContent = "●";
+
+
+    recognition.onresult = event => {
+
+        input.value =
+            event.results[0][0].transcript;
+
+    };
+
+
+    recognition.onerror = () => {
+
+        showToast("聽唔清楚，可以再講一次");
+
+    };
+
+
+    recognition.onend = () => {
+
+        button.classList.remove(
+            "voice-listening"
+        );
+
+        button.textContent = "🎙";
+
+    };
+
+
+    recognition.start();
+
+}
+
+
+/* =========================================================
+   Submit Correction
+========================================================= */
+
+function submitCorrection() {
+
+    const input =
+        document
+            .getElementById("editInput")
+            .value
+            .trim();
+
+    if (!input) {
+
+        showToast("請先講或者輸入你食緊咩");
+
+        return;
+
+    }
+
+
+    let detectedFood =
+        foods.charsiou;
+
+
+    if (
+        input.includes("火鍋") ||
+        input.includes("麻辣")
+    ) {
+
+        detectedFood =
+            foods.hotpot;
+
+    } else if (
+        input.includes("燒雞") ||
+        input.includes("雞")
+    ) {
+
+        detectedFood =
+            foods.chicken;
+
+    }
+
+
+    currentFood =
+        detectedFood;
+
+
+    showToast(
+        "收到，AI 會重新分析呢餐"
+    );
+
+
+    setTimeout(() => {
+
+        startAIAnalysis();
+
+    }, 500);
+
+}
+
+
+/* =========================================================
+   Confirm Meal
+========================================================= */
 
 function confirmMeal() {
 
     showScreen("result");
 
+    document.getElementById("resultFood")
+        .textContent =
+        currentFood.emoji;
+
+    document.getElementById("resultCopy")
+        .textContent =
+        currentFood.slogan;
+
+
     setTimeout(() => {
 
-        document.getElementById("stampOverlay").classList.add("show");
+        document
+            .getElementById("stampOverlay")
+            .classList.add("show");
 
-        stampTimer = setTimeout(() => {
-            closeStamp();
-        }, 1250);
+        stampTimer =
+            setTimeout(closeStamp, 1250);
 
     }, 250);
 
@@ -2344,56 +3606,56 @@ function closeStamp() {
 
     clearTimeout(stampTimer);
 
-    document.getElementById("stampOverlay").classList.remove("show");
+    document
+        .getElementById("stampOverlay")
+        .classList.remove("show");
 
 }
 
 
 /* =========================================================
-   Food Tag Editing
+   Food Tags
 ========================================================= */
 
 function cycleFoodTag(button) {
 
-    const alternatives = [
-        ["燒製", "煎製", "蒸煮"],
-        ["雞肉", "豬肉", "魚肉"],
-        ["脆皮", "去皮", "少油"]
-    ];
+    const groups = {
 
-    const original = button.dataset.index;
+        "燒製": ["燒製","煎製","蒸煮"],
+        "煎製": ["燒製","煎製","蒸煮"],
+        "蒸煮": ["燒製","煎製","蒸煮"],
 
-    if (original === undefined) {
-        button.dataset.index = "0";
-    }
+        "雞肉": ["雞肉","豬肉","魚肉"],
+        "豬肉": ["雞肉","豬肉","魚肉"],
+        "魚肉": ["雞肉","豬肉","魚肉"],
 
-    const group = button.textContent.trim();
+        "脆皮": ["脆皮","去皮","少油"],
+        "去皮": ["脆皮","去皮","少油"],
+        "少油": ["脆皮","去皮","少油"],
 
-    let values;
+        "飯類": ["飯類","麵類","粉類"],
+        "叉燒": ["叉燒","牛肉","雞肉"],
+        "濃味": ["濃味","清淡","少汁"],
 
-    if (
-        group === "燒製" ||
-        group === "煎製" ||
-        group === "蒸煮"
-    ) {
-        values = alternatives[0];
-    } else if (
-        group === "雞肉" ||
-        group === "豬肉" ||
-        group === "魚肉"
-    ) {
-        values = alternatives[1];
-    } else {
-        values = alternatives[2];
-    }
+        "火鍋": ["火鍋","湯麵","燉湯"],
+        "辛辣": ["辛辣","微辣","不辣"],
+        "湯底": ["湯底","清湯","番茄"]
 
-    let current = values.indexOf(button.textContent.trim());
+    };
 
-    if (current < 0) current = 0;
 
-    current = (current + 1) % values.length;
+    const values =
+        groups[button.textContent.trim()] ||
+        ["選項一","選項二","選項三"];
 
-    button.textContent = values[current];
+    let index =
+        values.indexOf(button.textContent.trim());
+
+    index =
+        (index + 1) % values.length;
+
+    button.textContent =
+        values[index];
 
     showToast("已更新食材標籤");
 
@@ -2401,21 +3663,24 @@ function cycleFoodTag(button) {
 
 
 /* =========================================================
-   Report Period
+   Report
 ========================================================= */
 
 function switchPeriod(button, period) {
 
-    document.querySelectorAll(".period-btn")
-        .forEach(btn => btn.classList.remove("active"));
+    document
+        .querySelectorAll(".period-btn")
+        .forEach(btn =>
+            btn.classList.remove("active")
+        );
 
     button.classList.add("active");
 
-    if (period === "month") {
-        showToast("已切換至本月 Report");
-    } else {
-        showToast("已切換至本週 Report");
-    }
+    showToast(
+        period === "month"
+            ? "已切換至本月 Report"
+            : "已切換至本週 Report"
+    );
 
 }
 
@@ -2425,13 +3690,17 @@ function switchPeriod(button, period) {
 ========================================================= */
 
 function openShop() {
+
     showScreen("shop");
+
 }
 
 
 function addCart(product) {
 
-    showToast(product + " 已加入購物袋");
+    showToast(
+        product + " 已加入購物袋"
+    );
 
 }
 
@@ -2440,6 +3709,59 @@ function addCart(product) {
    Questionnaire
 ========================================================= */
 
+const questions = [
+
+    {
+        title:
+            "平時食完辣嘢，你比較容易？",
+
+        answers: [
+            "覺得口乾、想飲水",
+            "冇乜特別感覺",
+            "反而覺得幾舒服",
+            "平時少食辣，唔清楚"
+        ]
+    },
+
+    {
+        title:
+            "你平時最容易想食邊類食物？",
+
+        answers: [
+            "香辣、燒烤",
+            "甜食、奶茶",
+            "清淡湯水",
+            "冰凍飲品"
+        ]
+    },
+
+    {
+        title:
+            "你平時飲水習慣比較似？",
+
+        answers: [
+            "成日都想飲",
+            "口渴先飲",
+            "習慣少量多次",
+            "每日飲得唔多"
+        ]
+    },
+
+    {
+        title:
+            "最近飲食節奏點樣？",
+
+        answers: [
+            "比較多外賣",
+            "三餐算規律",
+            "有時忙到唔記得食",
+            "最近開始留意飲食"
+        ]
+    }
+
+];
+
+
 function openQuestionnaire() {
 
     currentQuestion = 0;
@@ -2447,7 +3769,8 @@ function openQuestionnaire() {
 
     renderQuestion();
 
-    document.getElementById("questionModal")
+    document
+        .getElementById("questionModal")
         .classList.add("show");
 
 }
@@ -2455,43 +3778,61 @@ function openQuestionnaire() {
 
 function renderQuestion() {
 
-    const question = questions[currentQuestion];
+    const question =
+        questions[currentQuestion];
 
-    document.getElementById("questionProgress").textContent =
+    document
+        .getElementById("questionProgress")
+        .textContent =
         `第 ${currentQuestion + 1} / ${questions.length} 題`;
 
-    document.getElementById("questionTitle").textContent =
+    document
+        .getElementById("questionTitle")
+        .textContent =
         question.title;
 
-    const list = document.getElementById("answerList");
+
+    const list =
+        document.getElementById("answerList");
 
     list.innerHTML = "";
 
-    question.answers.forEach((answer, index) => {
 
-        const button = document.createElement("button");
+    question.answers.forEach(answer => {
 
-        button.className = "answer-option";
+        const button =
+            document.createElement("button");
 
-        button.textContent = answer;
+        button.className =
+            "answer-option";
+
+        button.textContent =
+            answer;
+
 
         button.onclick = () => {
 
             document
                 .querySelectorAll(".answer-option")
-                .forEach(item => item.classList.remove("selected"));
+                .forEach(item =>
+                    item.classList.remove("selected")
+                );
 
             button.classList.add("selected");
 
-            selectedAnswer = index;
+            selectedAnswer = answer;
 
         };
+
 
         list.appendChild(button);
 
     });
 
-    document.getElementById("questionNext").textContent =
+
+    document
+        .getElementById("questionNext")
+        .textContent =
         currentQuestion === questions.length - 1
             ? "完成問卷"
             : "下一題";
@@ -2506,9 +3847,14 @@ function nextQuestion() {
         showToast("揀一個答案先啦");
 
         return;
+
     }
 
-    if (currentQuestion < questions.length - 1) {
+
+    if (
+        currentQuestion <
+        questions.length - 1
+    ) {
 
         currentQuestion++;
 
@@ -2518,10 +3864,13 @@ function nextQuestion() {
 
     } else {
 
-        document.getElementById("questionModal")
+        document
+            .getElementById("questionModal")
             .classList.remove("show");
 
-        showToast("問卷完成，已更新你的體質光譜");
+        showToast(
+            "問卷完成，已更新你的飲食光譜"
+        );
 
     }
 
@@ -2536,60 +3885,132 @@ let toastTimer;
 
 function showToast(message) {
 
-    const toast = document.getElementById("toast");
+    const toast =
+        document.getElementById("toast");
 
-    toast.textContent = message;
+    toast.textContent =
+        message;
 
     toast.classList.add("show");
 
     clearTimeout(toastTimer);
 
-    toastTimer = setTimeout(() => {
-        toast.classList.remove("show");
-    }, 1800);
+    toastTimer =
+        setTimeout(() => {
+
+            toast.classList.remove("show");
+
+        }, 1800);
 
 }
 
 
 /* =========================================================
-   Keyboard accessibility
+   Back / Escape
 ========================================================= */
 
-document.addEventListener("keydown", event => {
-
-    if (event.key === "Escape") {
-
-        document
-            .getElementById("questionModal")
-            .classList.remove("show");
-
-        closeStamp();
-
-    }
-
-});
-
-
-/* =========================================================
-   Prevent modal click-through
-========================================================= */
-
-document
-    .querySelector(".modal-sheet")
-    .addEventListener("click", event => {
-        event.stopPropagation();
-    });
-
-
-/* =========================================================
-   Demo initialization
-========================================================= */
-
-document.addEventListener("DOMContentLoaded", () => {
+function goHome() {
 
     showScreen("home");
 
-});
+}
+
+
+document.addEventListener(
+    "keydown",
+    event => {
+
+        if (event.key === "Escape") {
+
+            document
+                .getElementById("questionModal")
+                .classList.remove("show");
+
+            closeStamp();
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   Prevent iOS gesture zoom
+========================================================= */
+
+document.addEventListener(
+    "gesturestart",
+    event => {
+        event.preventDefault();
+    },
+    { passive:false }
+);
+
+document.addEventListener(
+    "gesturechange",
+    event => {
+        event.preventDefault();
+    },
+    { passive:false }
+);
+
+document.addEventListener(
+    "gestureend",
+    event => {
+        event.preventDefault();
+    },
+    { passive:false }
+);
+
+
+/* iOS double-tap zoom prevention */
+
+let lastTouchEnd = 0;
+
+document.addEventListener(
+    "touchend",
+    event => {
+
+        const now =
+            Date.now();
+
+        if (
+            now - lastTouchEnd <= 300
+        ) {
+
+            event.preventDefault();
+
+        }
+
+        lastTouchEnd = now;
+
+    },
+    { passive:false }
+);
+
+
+/* Modal click */
+
+document
+    .querySelector(".modal-sheet")
+    .addEventListener(
+        "click",
+        event => {
+            event.stopPropagation();
+        }
+    );
+
+
+/* Initialization */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    () => {
+
+        showScreen("home");
+
+    }
+);
 
 </script>
 
