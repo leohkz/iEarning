@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>產品套餐選擇器</title>
+<style>
+:root{--bg:#f5f6f8;--card:#fff;--text:#17202a;--muted:#6b7280;--line:#e5e7eb;--accent:#2563eb;--accent2:#0f766e;--danger:#dc2626;--shadow:0 10px 28px rgba(15,23,42,.08)}
+body.dark{--bg:#0f1115;--card:#171a21;--text:#f3f4f6;--muted:#9ca3af;--line:#2a2f3a;--shadow:0 12px 30px rgba(0,0,0,.3)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang TC","Microsoft JhengHei",Arial,sans-serif;line-height:1.45;padding-bottom:calc(105px + env(safe-area-inset-bottom))}
+button,input,select{font:inherit} button{cursor:pointer}
+.wrap{max-width:1180px;margin:auto;padding:env(safe-area-inset-top) 18px 40px}
+header{padding:28px 0 18px;display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+h1{margin:0;font-size:clamp(28px,4vw,42px);letter-spacing:-.03em}.sub{color:var(--muted);margin-top:7px}
+.icon-btn{border:1px solid var(--line);background:var(--card);color:var(--text);width:42px;height:42px;border-radius:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow)}
+.control{padding:18px;margin-bottom:16px}
+.balance-row{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:end}.field label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}.input{width:100%;height:50px;border:1px solid var(--line);background:transparent;color:var(--text);border-radius:13px;padding:0 14px;font-size:20px;outline:none}.input:focus{border-color:var(--accent)}
+.primary{height:50px;padding:0 18px;border:0;border-radius:13px;background:var(--accent);color:white;font-weight:700}.ghost{height:42px;padding:0 14px;border:1px solid var(--line);border-radius:12px;background:transparent;color:var(--text)}
+.modes{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}.mode{border:1px solid var(--line);background:transparent;color:var(--muted);padding:9px 13px;border-radius:999px}.mode.active{background:var(--text);color:var(--card);border-color:var(--text)}
+.section-title{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:0 0 12px}.section-title h2{font-size:18px;margin:0}.section-title small{color:var(--muted)}
+details{border:1px solid var(--line);border-radius:16px;overflow:hidden} summary{list-style:none;cursor:pointer;padding:15px 16px;font-weight:700}summary::-webkit-details-marker{display:none}.details-body{padding:0 16px 16px}
+.pref-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.pref{border:1px solid var(--line);border-radius:14px;padding:12px}.pref label{font-size:12px;color:var(--muted);display:block;margin-bottom:6px}.select{width:100%;height:42px;background:transparent;color:var(--text);border:1px solid var(--line);border-radius:10px;padding:0 9px}.check{display:flex;align-items:center;gap:8px;height:42px}.check input{width:18px;height:18px}
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}.chip-btn{padding:8px 11px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--text)}
+.exclude-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.exclude-group{border:1px solid var(--line);border-radius:14px;padding:12px}.exclude-group h3{font-size:14px;margin:0 0 8px}.exclude-item{display:flex;align-items:center;gap:7px;font-size:13px;padding:5px 0}.exclude-item input{width:16px;height:16px}
+.status{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}.badge{padding:7px 10px;border-radius:999px;background:color-mix(in srgb,var(--accent) 10%,transparent);color:var(--accent);font-size:12px;font-weight:700}
+.results{margin-top:16px}.result-list{display:grid;gap:12px}.result{padding:16px;border:1px solid var(--line);border-radius:18px}.result-top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.result-title{font-weight:800;font-size:18px}.money{font-weight:900;font-size:24px}.result-meta{color:var(--muted);font-size:13px;margin-top:4px}.result-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}.tag{font-size:12px;border:1px solid var(--line);padding:5px 8px;border-radius:999px;color:var(--muted)}
+.reco-items{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:13px}.reco-item{border:1px solid var(--line);border-radius:14px;padding:10px;display:flex;gap:10px;align-items:center}.qty{font-size:28px;font-weight:900;line-height:1;min-width:52px;text-align:center}.reco-name{font-weight:700}.reco-sub{font-size:12px;color:var(--muted)}
+.product-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.product{overflow:hidden}.thumb{width:100%;aspect-ratio:16/9;background:#e5e7eb;display:flex;align-items:center;justify-content:center;color:#9ca3af;font-size:13px}.thumb img{width:100%;height:100%;object-fit:contain;display:block}.product-body{padding:13px}.category{font-size:11px;color:var(--accent);font-weight:800}.product-name{font-weight:800;margin-top:5px}.package-list{margin-top:10px;display:grid;gap:7px}.pkg{border:1px solid var(--line);border-radius:11px;padding:9px;display:flex;justify-content:space-between;gap:10px}.pkg strong{font-size:14px}.unit{font-size:11px;color:var(--muted);margin-top:2px}.pkg-price{text-align:right;font-weight:800;white-space:nowrap}
+.manual-group{padding:14px;border:1px solid var(--line);border-radius:16px}.manual-group h3{margin:0 0 10px;font-size:15px}.manual-row{display:grid;grid-template-columns:1fr auto auto;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line)}.manual-row:last-child{border-bottom:0}.stepper{display:flex;align-items:center;border:1px solid var(--line);border-radius:10px;overflow:hidden}.stepper button{width:34px;height:34px;border:0;background:transparent;color:var(--text)}.stepper span{width:38px;text-align:center;font-weight:700}.manual-price{font-weight:800;min-width:86px;text-align:right}.shop-pkg{align-items:center}.shop-right{display:flex;flex-direction:column;align-items:flex-end;gap:6px}.chosen{font-size:11px;color:var(--accent);font-weight:700;white-space:nowrap}
+.empty{padding:30px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:16px}
+.settings{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:flex-end;justify-content:center;z-index:20}.settings.open{display:flex}.sheet{width:min(680px,100%);background:var(--card);border-radius:22px 22px 0 0;padding:18px;max-height:88vh;overflow:auto}.sheet-head{display:flex;justify-content:space-between;align-items:center}.setting-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
+@media(max-width:850px){.pref-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.product-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.exclude-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:620px){.wrap{padding-left:12px;padding-right:12px}.balance-row{grid-template-columns:1fr}.pref-grid,.product-grid,.exclude-grid,.reco-items{grid-template-columns:1fr}.result-top{flex-direction:column}.balance-row .primary{width:100%}.manual-row{grid-template-columns:1fr auto}.manual-price{display:none}}
+</style>
+
+<style>
+.floating-summary{position:fixed;left:50%;bottom:max(14px,env(safe-area-inset-bottom));transform:translateX(-50%);width:min(760px,calc(100% - 24px));z-index:100;background:rgba(23,26,33,.94);color:#fff;border:1px solid rgba(255,255,255,.14);border-radius:18px;box-shadow:0 14px 40px rgba(0,0,0,.28);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);padding:12px 16px}.floating-summary-inner{display:grid;grid-template-columns:1fr auto auto auto;align-items:center;gap:16px}.floating-main{min-width:0}.floating-label{color:#9ca3af;font-size:11px;margin-bottom:2px}.floating-total{font-size:22px;font-weight:900;white-space:nowrap}.floating-stat{text-align:center;min-width:72px}.floating-stat .value{font-size:16px;font-weight:800;white-space:nowrap}.floating-stat .label{color:#9ca3af;font-size:10px}.floating-progress{position:absolute;left:0;bottom:0;height:3px;border-radius:0 0 18px 18px;background:var(--accent);width:0%;transition:width .2s ease}@media(max-width:620px){.floating-summary{width:calc(100% - 16px);padding:10px 12px;border-radius:16px}.floating-summary-inner{grid-template-columns:1.25fr 1fr 1fr;gap:8px}.floating-main{grid-column:1/-1;display:flex;justify-content:space-between;align-items:center;gap:10px}.floating-total{font-size:20px}.floating-stat{min-width:0}}</style>
+</head>
+<body>
+<div class="wrap">
+<header><div><h1 data-i18n="title"></h1><div class="sub" data-i18n="subtitle"></div></div><button class="icon-btn" id="settingsBtn">⚙️</button></header>
+
+<section class="card control">
+ <div class="balance-row"><div class="field"><label data-i18n="balanceLabel"></label><input id="balance" class="input" inputmode="decimal" type="number" min="0" step="1" placeholder="例如 1000"></div><button id="calcBtn" class="primary" data-i18n="calc"></button></div>
+ <div class="modes"><button class="mode active" data-mode="smart" data-i18n="smart"></button><button class="mode" data-mode="shop" data-i18n="shop"></button></div>
+</section>
+
+<section class="card control" id="prefsSection">
+ <div class="section-title"><h2 data-i18n="preferences"></h2><small data-i18n="preferencesHint"></small></div>
+ <div class="pref-grid">
+  <div class="pref"><div class="check"><input id="coreNMN" type="checkbox"><label for="coreNMN" data-i18n="coreNMN"></label></div></div>
+  <div class="pref"><label data-i18n="variety"></label><select id="variety" class="select"><option value="0" data-i18n="auto"></option><option value="3">3</option><option value="5">5</option><option value="7">7</option><option value="9">9+</option></select></div>
+  <div class="pref"><label data-i18n="maxRepeat"></label><select id="maxRepeat" class="select"><option value="1">1</option><option value="2" selected>2</option><option value="3">3</option></select></div>
+  <div class="pref"><label data-i18n="bundlePriority"></label><select id="bundlePriority" class="select"><option value="high" data-i18n="high"></option><option value="balanced" selected data-i18n="balanced"></option><option value="low" data-i18n="low"></option></select></div>
+ </div>
+ <div class="status"><label class="check"><input id="noSingles" type="checkbox" checked><span data-i18n="noSingles"></span></label></div>
+</section>
+
+<section class="card control">
+ <div class="section-title"><h2 data-i18n="excludeTitle"></h2><button class="ghost" id="excludeToggle" data-i18n="expand"></button></div>
+ <div id="excludeBody" style="display:none"><div class="toolbar"><button class="chip-btn" id="selectAll" data-i18n="selectAll"></button><button class="chip-btn" id="clearAll" data-i18n="clearAll"></button><button class="chip-btn" id="resetAll" data-i18n="resetAll"></button></div><div id="excludeGrid" class="exclude-grid"></div></div>
+</section>
+
+<section class="results" id="smartView"><div class="section-title"><h2 data-i18n="recommendations"></h2><small id="smartSummary"></small></div><div id="resultList" class="result-list"></div></section>
+
+<section class="results" id="shopView" style="display:none"><div class="section-title"><h2 data-i18n="shop"></h2><small id="shopSummary"></small></div><div id="shopGrid" class="product-grid"></div></section>
+</div>
+
+<div class="settings" id="settingsModal"><div class="sheet"><div class="sheet-head"><h2 data-i18n="settings"></h2><button class="ghost" id="closeSettings" data-i18n="close"></button></div><div class="setting-grid"><div><label data-i18n="language"></label><select id="lang" class="select"><option value="zh-Hant">繁體中文</option><option value="zh-Hans">简体中文</option><option value="en">English</option></select></div><div><label data-i18n="theme"></label><select id="theme" class="select"><option value="light" data-i18n="light"></option><option value="dark" data-i18n="dark"></option></select></div></div></div></div>
+
+<script>
+const products = [
+ {id:'nmn-single',group:'NMN基因平衡膠囊（單方）',cat:'愛健康系列',core:true,img:'https://ssl4.primedownline.com/IMX_TM/IMX_Accounts/clients/ihlusa/imx_cart/images/701D.jpg',packages:[['single',1,168,'單瓶'],['bundle',4,500,'4 瓶'],['bundle',6,750,'6 瓶']]},
+ {id:'nmn-plus',group:'NMN + 白藜蘆醇基因平衡膠囊（複方）',cat:'愛健康系列',img:'https://secure4.office2office.com/IMX_TM/IMX_Accounts/clients/ihlusa/imx_cart/images/727.jpg',packages:[['single',1,168,'單瓶'],['bundle',4,500,'4 瓶'],['bundle',6,750,'6 瓶']]},
+ {id:'multi',group:'NMN 多維多礦泡騰片',cat:'愛健康系列',img:'https://secure4.office2office.com/IMX_TM/IMX_Accounts/clients/ihlusa/imx_cart/images/723.jpg',packages:[['single',1,168,'單盒'],['bundle',4,500,'4 盒']]},
+ {id:'electrolyte',group:'NMN 青春泉泡騰片',cat:'愛健康系列',img:'https://secure4.office2office.com/IMX_TM/IMX_Accounts/clients/ihlusa/imx_cart/images/6%20Pack%20NMN%20Electrolyte%20Drink%20(300mg%20version).jpg',packages:[['bundle',6,300,'6 盒']]},
+ {id:'coffee',group:'NMN 逆齡減脂咖啡',cat:'愛健康系列',img:'https://secure4.office2office.com/IMX_TM/IMX_Accounts/clients/ihlusa/imx_cart/images/702_IMG_8927_small.jpg',packages:[['single',1,75,'單盒'],['bundle',6,300,'6 盒']]},
+ {id:'immune',group:'防護免疫王',cat:'愛生命系列',img:'https://ssl4.primedownline.com/IMX_TM/IMX_Accounts/clients/ihlusa/imx_cart/images/736.jpg',packages:[['single',1,168,'單瓶'],['bundle',4,455,'4 瓶']]},
+ {id:'cardio',group:'心臟能量王',cat:'愛生命系列',img:'https://secure4.office2office.com/IMX_TM/IMX_Accounts/clients/ihlusa/imx_cart/images/730.jpg',packages:[['single',1,148,'單瓶'],['bundle',6,858,'6 瓶']]},
+ {id:'imphi',group:'巨噬防禦王',cat:'愛生命系列',img:'https://ssl4.primedownline.com/IMX_TM/IMX_Accounts/clients/ihlusa/imx_cart/images/728.jpg',packages:[['single',1,138,'單瓶'],['bundle',6,798,'6 瓶']]},
+ {id:'respir',group:'養氣清肺王',cat:'愛生命系列',img:'https://ssl4.primedownline.com/IMX_TM/IMX_Accounts/clients/ihlusa/imx_cart/images/729%20.jpg',packages:[['single',1,88,'單瓶'],['bundle',6,498,'6 瓶']]},
+ {id:'youth',group:'活力美妍王',cat:'愛生命系列',img:'https://ssl4.primedownline.com/IMX_TM/IMX_Accounts/clients/ihlusa/imx_cart/images/731.jpg',packages:[['single',1,88,'單盒'],['bundle',6,498,'6 盒']]},
+ {id:'igi',group:'每朝順暢王',cat:'愛生命系列',img:'https://secure4.office2office.com/IMX_TM/IMX_Accounts/clients/ihlusa/imx_cart/images/740.jpg',packages:[['single',1,68,'單瓶'],['bundle',4,230,'4 瓶']]},
+ {id:'iglp',group:'健康益菌王',cat:'愛生命系列',img:'https://secure4.office2office.com/IMX_TM/IMX_Accounts/clients/ihlusa/imx_cart/images/738.jpg',packages:[['single',1,128,'單盒'],['bundle',4,480,'4 盒']]},
+ {id:'ring',group:'iHalo 智能指環',cat:'愛生命系列',img:null,packages:[['single',1,399,'1 枚']]},
+ {id:'ha',group:'HA Collagen Booster（玻尿酸膠原蛋白增強）',cat:'護膚／美容',img:'https://secure4.office2office.com/IMX_TM/IMX_Accounts/clients/ihlusa/imx_cart/images/703.jpeg',packages:[['single',1,298,'1 件']]},
+ {id:'uv',group:'UV Clear Defense SPF 50（UV 清透防護 SPF 50）',cat:'護膚／美容',img:'https://ssl4.primedownline.com/IMX_TM/IMX_Accounts/clients/ihlusa/imx_cart/images/704.jpeg',packages:[['single',1,108,'1 件']]},
+ {id:'mask',group:'Rapid Clear Mint Mask（快速清爽薄荷面膜）',cat:'護膚／美容',img:'https://secure4.office2office.com/IMX_TM/IMX_Accounts/clients/ihlusa/imx_cart/images/705_RC_small.jpg',packages:[['single',1,78,'1 件']]},
+ {id:'creme',group:'NMN 逆齡霜（iYouth Creme）',cat:'護膚／美容',img:'https://ssl4.primedownline.com/IMX_TM/IMX_Accounts/clients/ihlusa/imx_cart/images/Youth.jpg',packages:[['single',1,168,'1 盒'],['bundle',2,260,'2 盒'],['bundle',3,336,'3 盒']]},
+ {id:'skincare-set',group:'HA UV RC iYouth Creme 完整護膚套餐',cat:'護膚／美容',img:'https://secure4.office2office.com/IMX_TM/IMX_Accounts/clients/ihlusa/imx_cart/images/742.jpeg',complete:true,packages:[['complete',4,450,'完整套餐（4 款各 1）']]}
+];
+products.forEach(p=>p.packages=p.packages.map(([kind,units,price,label])=>({kind,units,price,label})));
+const I18N={
+ 'zh-Hant':{title:'產品套餐選擇器',subtitle:'根據產品卡餘額、套餐優惠與推薦偏好，找出更合理的購物組合。',balanceLabel:'產品卡餘額（USD）',calc:'開始計算',smart:'智能推薦',manual:'自由選擇',browse:'產品瀏覽',shop:'選購產品',preferences:'推薦偏好',preferencesHint:'控制智能推薦的方向',coreNMN:'優先包含 NMN 單方',variety:'希望至少有幾款不同產品',auto:'自動',maxRepeat:'同一產品最多幾套',bundlePriority:'套餐優先程度',high:'高',balanced:'平衡',low:'低',noSingles:'不要購買單品（指環除外）',excludeTitle:'排除不想購買的產品',expand:'展開',collapse:'收起',selectAll:'全部剔除',clearAll:'全部恢復',resetAll:'重設',recommendations:'推薦方案',freeChoose:'自由選擇',productList:'產品與價格',productListHint:'顯示所有可購買套餐',settings:'設定',close:'關閉',language:'語言',theme:'主題',light:'明亮',dark:'暗色',remaining:'剩餘',spent:'合計',types:'款產品',packs:'個套餐',units:'件產品',core:'含 NMN 單方',smartEmpty:'請先輸入產品卡餘額，例如 1000。',noPlan:'目前沒有符合條件的組合。可以提高餘額、減少排除產品或放寬推薦偏好。',manualHint:'自行調整每款套餐數量',shopHint:'選擇套餐數量，系統即時計算總額。',unit:'件',itemUnit:'件',disabled:'已排除',unitPrice:'平均單價',single:'單品',bundle:'套餐',complete:'完整套餐',totalItems:'共',countUnit:'套',currency:'USD',defaultImage:'圖片無法載入',amount:'金額',included:'包含',recommended:'推薦',}
+,'zh-Hans':{title:'产品套餐选择器',subtitle:'根据产品卡余额、套餐优惠与推荐偏好，找出更合理的购物组合。',balanceLabel:'产品卡余额（USD）',calc:'开始计算',smart:'智能推荐',manual:'自由选择',browse:'产品浏览',shop:'选购产品',preferences:'推荐偏好',preferencesHint:'控制智能推荐方向',coreNMN:'优先包含 NMN 单方',variety:'希望至少有几款不同产品',auto:'自动',maxRepeat:'同一产品最多几套',bundlePriority:'套餐优先程度',high:'高',balanced:'平衡',low:'低',noSingles:'不要购买单品（指环除外）',excludeTitle:'排除不想购买的产品',expand:'展开',collapse:'收起',selectAll:'全部剔除',clearAll:'全部恢复',resetAll:'重设',recommendations:'推荐方案',freeChoose:'自由选择',productList:'产品与价格',productListHint:'显示所有可购买套餐',settings:'设置',close:'关闭',language:'语言',theme:'主题',light:'明亮',dark:'暗色',remaining:'剩余',spent:'合计',types:'款产品',packs:'个套餐',units:'件产品',core:'含 NMN 单方',smartEmpty:'请先输入产品卡余额，例如 1000。',noPlan:'目前没有符合条件的组合。可以提高余额、减少排除产品或放宽推荐偏好。',manualHint:'自行调整每款套餐数量',disabled:'已排除',unitPrice:'平均单价',single:'单品',bundle:'套餐',complete:'完整套餐',totalItems:'共',countUnit:'套',currency:'USD',defaultImage:'图片无法载入',amount:'金额',included:'包含',recommended:'推荐'}
+,'en':{title:'Product Package Selector',subtitle:'Build a more practical basket from your product-card balance, bundle savings and preferences.',balanceLabel:'Product Card Balance (USD)',calc:'Calculate',smart:'Smart Recommend',manual:'Free Choice',browse:'Products',shop:'Shop Products',preferences:'Recommendation Preferences',preferencesHint:'Control how Smart Recommend behaves',coreNMN:'Prioritize NMN Single Formula',variety:'Minimum product varieties',auto:'Auto',maxRepeat:'Max bundles per product',bundlePriority:'Bundle priority',high:'High',balanced:'Balanced',low:'Low',noSingles:'Do not buy singles (except the ring)',excludeTitle:'Exclude products',expand:'Expand',collapse:'Collapse',selectAll:'Exclude all',clearAll:'Restore all',resetAll:'Reset',recommendations:'Recommendations',freeChoose:'Free Choice',productList:'Products & Prices',productListHint:'All purchasable packages',settings:'Settings',close:'Close',language:'Language',theme:'Theme',light:'Light',dark:'Dark',remaining:'Remaining',spent:'Total',types:' products',packs:' bundles',units:' items',core:'Includes NMN',smartEmpty:'Enter a product-card balance, for example 1000.',noPlan:'No plan matches these settings. Increase the balance, remove exclusions, or loosen the preferences.',manualHint:'Adjust package quantities yourself',shopHint:'Choose package quantities and see the total instantly.',unit:'item',itemUnit:' items',disabled:'Excluded',unitPrice:'Unit price',single:'Single',bundle:'Bundle',complete:'Complete set',totalItems:'Total',countUnit:'sets',currency:'USD',defaultImage:'Image unavailable',amount:'Amount',included:'Includes',recommended:'Recommended'}
+};
+let state={lang:localStorage.getItem('pkg.lang')||'zh-Hant',theme:localStorage.getItem('pkg.theme')||'light',mode:'smart',balance:0,coreNMN:true,variety:0,maxRepeat:2,bundlePriority:'balanced',noSingles:true,excluded:new Set(JSON.parse(localStorage.getItem('pkg.excluded')||'[]')),manual:{}};
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+function t(k){return I18N[state.lang][k]??k}
+function save(){localStorage.setItem('pkg.lang',state.lang);localStorage.setItem('pkg.theme',state.theme);localStorage.setItem('pkg.excluded',JSON.stringify([...state.excluded]))}
+function applyLang(){document.documentElement.lang=state.lang;document.querySelectorAll('[data-i18n]').forEach(el=>el.textContent=t(el.dataset.i18n));$('#excludeToggle').textContent=$('#excludeBody').style.display==='none'?t('expand'):t('collapse');document.title=t('title')}
+function applyTheme(){document.body.classList.toggle('dark',state.theme==='dark')}
+function usableProduct(p){if(state.excluded.has(p.id))return false;return true}
+function usablePkg(p,pkg){if(!usableProduct(p))return false;if(state.noSingles && pkg.kind==='single' && p.id!=='ring')return false;return true}
+function allGroups(){return [...new Set(products.map(p=>p.cat))]}
+function renderExclusions(){const by={};products.forEach(p=>(by[p.cat]??=[]).push(p));$('#excludeGrid').innerHTML=Object.entries(by).map(([cat,list])=>`<div class="exclude-group"><h3>${cat}</h3>${list.map(p=>`<label class="exclude-item"><input type="checkbox" data-exclude="${p.id}" ${state.excluded.has(p.id)?'checked':''}><span>${p.group}</span></label>`).join('')}</div>`).join('');$$('[data-exclude]').forEach(el=>el.onchange=()=>{el.checked?state.excluded.add(el.dataset.exclude):state.excluded.delete(el.dataset.exclude);save();renderAll()})}
+function bestPackages(){return products.flatMap(p=>p.packages.filter(pkg=>usablePkg(p,pkg)).map(pkg=>({p,pkg,unit:pkg.price/pkg.units}))).sort((a,b)=>a.unit-b.unit)}
+function scoreOption(item){let s=item.pkg.price/item.pkg.units;let bundleBonus=item.pkg.kind==='complete'?50:item.pkg.kind==='bundle'?20:0;if(state.bundlePriority==='high')bundleBonus*=2;if(state.bundlePriority==='low')bundleBonus*=.4;return -s+bundleBonus}
+function makeCandidates(balance){
+ const candidates=[]; const limit=state.maxRepeat;
+ // Start from different product groups so we naturally get variety.
+ const groups={}; products.filter(usableProduct).forEach(p=>groups[p.id]=[]);
+ const pool=bestPackages().filter(x=>x.pkg.price<=balance);
+ // seed candidate around several variety targets
+ const targets=state.variety?[state.variety,Math.max(1,state.variety-1),state.variety+1]:[3,5,7,9];
+ for(const target of targets){
+   let selected=[];let spent=0;let seen=new Set();
+   if(state.coreNMN){const core=pool.find(x=>x.p.core && x.pkg.kind!=='single');if(core&&core.pkg.price<=balance){selected.push({...core,qty:1});spent+=core.pkg.price;seen.add(core.p.id)}}
+   const ranked=[...pool].sort((a,b)=>scoreOption(b)-scoreOption(a));
+   for(const x of ranked){if(spent+x.pkg.price>balance)continue;if(seen.has(x.p.id))continue;if(seen.size>=target)break;selected.push({...x,qty:1});spent+=x.pkg.price;seen.add(x.p.id)}
+   // If variety seed is too large, continue adding good bundles up to repeat cap while affordable.
+   let guard=0;
+   while(guard++<200){
+     const opts=ranked.filter(x=>spent+x.pkg.price<=balance);
+     if(!opts.length)break;
+     let best=null,bestScore=-Infinity;
+     for(const x of opts){const existing=selected.find(y=>y.p.id===x.p.id);const qty=existing?.qty||0;if(qty>=limit)continue;if(existing&& (existing.pkg.price!==x.pkg.price || existing.pkg.units!==x.pkg.units))continue;
+       const diversity=!existing?35:0; const core=x.p.core?25:0; const bundle=x.pkg.kind==='complete'?45:(x.pkg.kind==='bundle'?20:0); const leftoverPenalty=(balance-(spent+x.pkg.price))/balance*2; const samePenalty=existing?18*qty:0;
+       let score=diversity+core+bundle-samePenalty-leftoverPenalty;
+       if(state.bundlePriority==='high')score+=x.pkg.kind==='single'?-35:20;
+       if(state.bundlePriority==='low')score+=x.pkg.kind==='single'?10:-8;
+       if(score>bestScore){bestScore=score;best=x}
+     }
+     if(!best)break;const existing=selected.find(y=>y.p.id===best.p.id);if(existing){existing.qty++;spent+=best.pkg.price}else{selected.push({...best,qty:1});spent+=best.pkg.price}
+   }
+   const varietyCount=new Set(selected.map(x=>x.p.id)).size; const coreOk=!state.coreNMN||selected.some(x=>x.p.core);
+   if(coreOk){const penaltyVar=state.variety?Math.abs(varietyCount-state.variety)*120:0;const repeatPenalty=selected.reduce((n,x)=>n+Math.max(0,x.qty-1)*35,0);const spentScore=(balance-spent)*0.12;const bundleScore=selected.reduce((n,x)=>n+(x.pkg.kind==='complete'?90:x.pkg.kind==='bundle'?30:0)*x.qty,0);candidates.push({items:selected,spent,remaining:balance-spent,variety:varietyCount,score:spentScore-penaltyVar-repeatPenalty+bundleScore})}
+ }
+ candidates.sort((a,b)=>b.score-a.score);
+ return dedupeCandidates(candidates).slice(0,8)
+}
+function dedupeCandidates(arr){const seen=new Set(),out=[];for(const c of arr){const key=c.items.map(x=>`${x.p.id}:${x.pkg.units}:${x.pkg.price}:${x.qty}`).sort().join('|');if(!seen.has(key)){seen.add(key);out.push(c)}}return out}
+function renderRecommendations(){const raw=parseFloat($('#balance').value||'0');state.balance=raw||0;if(!raw){$('#smartSummary').textContent='';$('#resultList').innerHTML=`<div class="empty">${t('smartEmpty')}</div>`;updateFloatingSummary();return}const cs=makeCandidates(raw);$('#smartSummary').textContent=`${t('spent')} ≤ $${raw.toLocaleString()}`;if(!cs.length){$('#resultList').innerHTML=`<div class="empty">${t('noPlan')}</div>`;updateFloatingSummary();return}$('#resultList').innerHTML=cs.map((c,i)=>{const core=c.items.some(x=>x.p.core);const itemCount=c.items.reduce((n,x)=>n+x.pkg.units*x.qty,0);const complete=c.items.filter(x=>x.pkg.kind==='complete').reduce((n,x)=>n+x.qty,0);return `<div class="result"><div class="result-top"><div><div class="result-title">${t('recommended')} ${i+1}</div><div class="result-meta">${c.variety}${t('types')} · ${c.items.reduce((n,x)=>n+x.qty,0)} ${t('packs')} · ${itemCount} ${t('units')}</div></div><div class="money">$${c.spent.toLocaleString()}</div></div><div class="result-meta">${t('remaining')} <b>$${c.remaining.toLocaleString()}</b></div><div class="result-tags">${core?`<span class="tag">${t('core')}</span>`:''}${complete?`<span class="tag">${complete} ${t('complete')}</span>`:''}</div><div class="reco-items">${c.items.map(x=>`<div class="reco-item"><div class="qty">×${x.qty}</div><div><div class="reco-name">${x.p.group}</div><div class="reco-sub">${x.qty*x.pkg.units} · ${x.pkg.label} · $${(x.qty*x.pkg.price).toLocaleString()}</div></div></div>`).join('')}</div></div>`}).join('');updateFloatingSummary()}
+function getShopTotals(){
+    let spent=0,items=0,sets=0;
+    Object.entries(state.manual).forEach(([key,q])=>{
+        if(!q)return;
+        const [pid,idx]=key.split(':');
+        const p=products.find(x=>x.id===pid);
+        const pkg=p?.packages[+idx];
+        if(pkg){spent+=q*pkg.price;items+=q*pkg.units;sets+=q;}
+    });
+    return {spent,items,sets};
+}
+function renderShop(){
+    const allowed=products.filter(usableProduct);
+    const balance=parseFloat($('#balance').value||'0');
+    const totals=getShopTotals();
+    $('#shopSummary').textContent=balance?`${t('spent')} $${totals.spent.toLocaleString()} · ${t('remaining')} $${Math.max(0,balance-totals.spent).toLocaleString()} · ${totals.items} ${t('units')}`:t('shopHint');
+    $('#shopGrid').innerHTML=allowed.map(p=>{
+        const pkgs=p.packages.filter(pkg=>usablePkg(p,pkg));
+        return `<div class="product card">
+            <div class="thumb">${p.img?`<img loading="lazy" src="${p.img}" alt="${p.group}" onerror="this.style.display='none';this.parentElement.textContent='${t('defaultImage')}'">`:t('defaultImage')}</div>
+            <div class="product-body">
+                <div class="category">${p.cat}${p.core?` · ⭐ ${t('core')}`:''}</div>
+                <div class="product-name">${p.group}</div>
+                <div class="package-list">
+                ${pkgs.map((pkg,idx)=>{
+                    const key=`${p.id}:${p.packages.indexOf(pkg)}`;
+                    const q=state.manual[key]||0;
+                    return `<div class="pkg shop-pkg">
+                        <div><strong>${pkg.label}</strong><div class="unit">${t(pkg.kind==='single'?'single':pkg.kind==='complete'?'complete':'bundle')} · $${(pkg.price/pkg.units).toFixed(2)}/${t('unit')}</div></div>
+                        <div class="shop-right"><div class="pkg-price">$${pkg.price.toLocaleString()}</div><div class="stepper"><button data-shop-dec="${key}">−</button><span>${q}</span><button data-shop-inc="${key}">＋</button></div>${q?`<div class="chosen">X${q} · ${t('totalItems')} ${q*pkg.units}${t('itemUnit')}</div>`:''}</div>
+                    </div>`;
+                }).join('')}
+                </div>
+            </div>
+        </div>`;
+    }).join('');
+    $$('[data-shop-inc]').forEach(b=>b.onclick=()=>{state.manual[b.dataset.shopInc]=(state.manual[b.dataset.shopInc]||0)+1;renderShop();});
+    $$('[data-shop-dec]').forEach(b=>b.onclick=()=>{state.manual[b.dataset.shopDec]=Math.max(0,(state.manual[b.dataset.shopDec]||0)-1);renderShop();});
+    updateFloatingSummary();
+}
+
+function updateFloatingSummary(){
+    const balance=parseFloat($('#balance')?.value||'0')||0;
+    let spent=0,units=0;
+    if(state.mode==='shop'){
+        const totals=getShopTotals();
+        spent=totals.spent;
+        units=totals.items;
+    }else if(state.mode==='smart'){
+        const first=makeCandidates(balance)[0];
+        if(first){
+            spent=first.spent;
+            units=first.items.reduce((n,x)=>n+x.qty*x.pkg.units,0);
+        }
+    }
+    const remaining=Math.max(0,balance-spent);
+    const percent=balance>0?Math.min(100,spent/balance*100):0;
+    const totalEl=$('#floatingTotal');
+    if(!totalEl)return;
+    totalEl.textContent='$'+spent.toLocaleString();
+    $('#floatingRemaining').textContent='$'+remaining.toLocaleString();
+    $('#floatingUnits').textContent=units.toLocaleString();
+    $('#floatingPercent').textContent=Math.round(percent)+'%';
+    $('#floatingProgress').style.width=percent+'%';
+}
+
+function renderAll(){applyLang();applyTheme();renderExclusions();if(state.mode==='smart')renderRecommendations();else renderShop();updateFloatingSummary()}
+function switchMode(mode){state.mode=mode;$$('.mode').forEach(b=>b.classList.toggle('active',b.dataset.mode===mode));$('#smartView').style.display=mode==='smart'?'block':'none';$('#shopView').style.display=mode==='shop'?'block':'none';if(mode==='smart')renderRecommendations();else renderShop();updateFloatingSummary()}
+$('#calcBtn').onclick=()=>{switchMode(state.mode)};$('#balance').addEventListener('input',()=>{if(state.mode==='smart')renderRecommendations();if(state.mode==='shop')renderShop()});$$('.mode').forEach(b=>b.onclick=()=>switchMode(b.dataset.mode));
+$('#excludeToggle').onclick=()=>{const el=$('#excludeBody');el.style.display=el.style.display==='none'?'block':'none';applyLang()};$('#selectAll').onclick=()=>{products.forEach(p=>state.excluded.add(p.id));save();renderAll()};$('#clearAll').onclick=()=>{state.excluded.clear();save();renderAll()};$('#resetAll').onclick=()=>{state.excluded.clear();state.coreNMN=true;state.variety=0;state.maxRepeat=2;state.bundlePriority='balanced';state.noSingles=true;$('#coreNMN').checked=true;$('#variety').value='0';$('#maxRepeat').value='2';$('#bundlePriority').value='balanced';$('#noSingles').checked=true;save();renderAll()};
+$('#coreNMN').checked=state.coreNMN;$('#variety').value=String(state.variety);$('#maxRepeat').value=String(state.maxRepeat);$('#bundlePriority').value=state.bundlePriority;$('#noSingles').checked=state.noSingles;
+$('#coreNMN').onchange=e=>{state.coreNMN=e.target.checked;renderRecommendations()};$('#variety').onchange=e=>{state.variety=+e.target.value;renderRecommendations()};$('#maxRepeat').onchange=e=>{state.maxRepeat=+e.target.value;renderRecommendations()};$('#bundlePriority').onchange=e=>{state.bundlePriority=e.target.value;renderRecommendations()};$('#noSingles').onchange=e=>{state.noSingles=e.target.checked;renderAll()};
+$('#settingsBtn').onclick=()=>$('#settingsModal').classList.add('open');$('#closeSettings').onclick=()=>$('#settingsModal').classList.remove('open');$('#settingsModal').addEventListener('click',e=>{if(e.target.id==='settingsModal')e.currentTarget.classList.remove('open')});$('#lang').value=state.lang;$('#theme').value=state.theme;$('#lang').onchange=e=>{state.lang=e.target.value;save();renderAll()};$('#theme').onchange=e=>{state.theme=e.target.value;save();renderAll()};
+renderAll();
+</script>
+<div id="floatingSummary" class="floating-summary"><div class="floating-summary-inner"><div class="floating-main"><div class="floating-label">目前購物籃</div><div id="floatingTotal" class="floating-total">$0</div></div><div class="floating-stat"><div id="floatingRemaining" class="value">$0</div><div class="label">剩餘</div></div><div class="floating-stat"><div id="floatingUnits" class="value">0</div><div class="label">件產品</div></div><div class="floating-stat"><div id="floatingPercent" class="value">0%</div><div class="label">已使用</div></div></div><div id="floatingProgress" class="floating-progress"></div></div>
+</body>
+</html>
