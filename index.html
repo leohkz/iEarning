@@ -352,11 +352,11 @@ html[lang="en"] .s5 .h2{font-size:56px}
 .prog button.on::after{background:var(--accent);height:6px;bottom:7px}
 .navbtn{display:none}
 .pageno{display:none;font-weight:800;font-size:15px;color:var(--ink-2);font-variant-numeric:tabular-nums}
-.bar{position:absolute;right:18px;bottom:38px;display:flex;align-items:center;gap:10px;padding:8px 10px 8px 20px;border-radius:999px;
+.bar{position:absolute;right:88px;bottom:48px;display:flex;align-items:center;gap:10px;padding:8px 10px 8px 20px;border-radius:999px;
   background:color-mix(in srgb,var(--surface) 90%,transparent);border:1px solid var(--line);box-shadow:var(--shadow);
   -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);
   opacity:0;transform:translateY(8px);transition:opacity .35s,transform .35s;pointer-events:none}
-.chrome.show .bar{opacity:1;transform:none;pointer-events:auto}
+.chrome.open .bar{opacity:1;transform:none;pointer-events:auto}
 .bar .hint{font-size:15px;color:var(--ink-3);white-space:nowrap;margin-right:6px}
 .seg{display:flex;padding:3px;border-radius:999px;background:var(--surface-2)}
 .seg button{padding:6px 14px;border-radius:999px;font-size:14px;font-weight:700;color:var(--ink-2);transition:background .2s,color .2s;white-space:nowrap}
@@ -529,6 +529,29 @@ html body.m .lr[class*=" g"]::before{left:-8px;width:4px}
   .rv{opacity:1;transform:none}
   .chart .line{stroke-dashoffset:0!important}.chart .gap,.chart .endpt,.chart .lbl{opacity:1!important}
 }
+
+.pill.back{background:var(--accent);color:var(--on-accent);border-color:transparent}
+.aw[data-bonus]{cursor:pointer;transition:filter .2s}
+.aw[data-bonus]:hover{filter:brightness(1.07)}
+.aw[data-bonus]:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+.aw[data-bonus]::after{content:"›";position:absolute;right:16px;top:6px;font-size:28px;font-weight:800;opacity:.45}
+.bd-hint{font-size:20px;color:var(--ink-3);font-weight:500;margin:-4px 0 10px 6px}
+#bdSvg{width:100%;height:100%;max-height:640px}
+html body.m .bd-hint{font-size:13px;margin:0 0 10px}
+
+.fab{position:fixed;right:20px;width:56px;height:56px;border-radius:50%;display:grid;place-items:center;background:var(--surface);color:var(--ink);border:1px solid var(--line);box-shadow:var(--shadow);pointer-events:auto;z-index:25;cursor:pointer;text-decoration:none;font-size:26px;font-weight:800;line-height:1;transition:transform .2s,background .2s,color .2s}
+.fab:hover{transform:scale(1.06)}
+.fab:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+.fab-s{bottom:44px}
+.fab-s svg{transition:transform .3s}
+.chrome.open .fab-s{background:var(--accent);color:var(--on-accent);border-color:transparent}
+.chrome.open .fab-s svg{transform:rotate(45deg)}
+.fab-k{bottom:112px;background:var(--accent);color:var(--on-accent);border-color:transparent}
+html body.m .bar{opacity:0;transform:translateY(-100%);pointer-events:none}
+html body.m .chrome.open .bar{opacity:1;transform:none;pointer-events:auto}
+html body.m .fab{right:14px;width:50px;height:50px}
+html body.m .fab-s{bottom:calc(78px + env(safe-area-inset-bottom,0px))}
+html body.m .fab-k{bottom:calc(138px + env(safe-area-inset-bottom,0px))}
 </style>
 </head>
 <body>
@@ -590,7 +613,7 @@ html body.m .lr[class*=" g"]::before{left:-8px;width:4px}
       <div class="top rv" style="--i:0">
         <div><h2 class="h2" data-i18n="s7.t"></h2><p class="sub" data-i18n="s7.sub"></p></div>
         <div class="ctrl" data-nogo>
-          <button class="pill" id="lkPrev">‹</button>
+          <button class="pill back" data-back></button><button class="pill" id="lkPrev">‹</button>
           <button class="pill" id="lkPlay"></button>
           <button class="pill" id="lkNext">›</button>
         </div>
@@ -659,9 +682,40 @@ html body.m .lr[class*=" g"]::before{left:-8px;width:4px}
         <div class="results" id="results"></div>
       </div>
     </section>
+
+    <!-- 8 · BONUS DETAIL (opened by clicking a bonus card) -->
+    <section class="slide s7 sd" data-slide="7">
+      <div class="top rv" style="--i:0">
+        <div><h2 class="h2" id="bdTitle"></h2><p class="sub" id="bdSub"></p></div>
+        <div class="ctrl" data-nogo>
+          <button class="pill back" data-back></button>
+          <button class="pill" id="bdPrev">‹</button>
+          <button class="pill" id="bdPlay"></button>
+          <button class="pill" id="bdNext">›</button>
+        </div>
+      </div>
+      <div class="lk-main">
+        <div class="lk-stage-wrap rv" style="--i:1"><svg id="bdSvg" viewBox="0 0 1040 760" role="img"></svg></div>
+        <div class="lk-side">
+          <div class="card emph lk-cap rv" style="--i:2">
+            <div class="k-lab" id="bdStepNo"></div>
+            <div class="lk-step-title" id="bdStepLab"></div>
+            <p id="bdStepText"></p>
+          </div>
+          <div class="lk-stats rv" style="--i:3">
+            <div class="card k-mini"><div class="k-lab" id="bdL1"></div><div class="k-num" id="bdV1">0</div></div>
+            <div class="card k-mini"><div class="k-lab" id="bdL2"></div><div class="k-num" id="bdV2">0</div></div>
+          </div>
+        </div>
+      </div>
+      <p class="note rv" style="--i:5" id="bdNote"></p>
+    </section>
+
   </div>
 
   <div class="chrome" id="chrome" data-nogo>
+    <a class="fab fab-k" href="10135K.html" aria-label="K">K</a>
+    <button class="fab fab-s" id="fabS" aria-label="Settings" aria-expanded="false"><svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg></button>
     <div class="bar">
       <span class="pageno" id="pageNo"></span>
       <span class="hint" data-i18n="hint"></span>
@@ -739,14 +793,14 @@ const I18N = {
     a2:[['直推 · 第 1 代','80BV × 20%','$16'],['第 2~8 代','80BV × 5%','$4']],
     a3sub:'8 代内复购 · 每月发放 · 上限 10 万人',
     a4sub:'8 代内复购 · 保持 6 个月 · 上限 10 万人',every:'每满 1,000 人',total:'累计',
-    a5sub:'复购人数达标 · 每月发放',a5chip:'感恩晚宴',
+    a5sub:'团建费 · 可报销 · 人数达标每月发放',a5chip:'感恩晚宴',
     a6sub:'AB 市场 · 一单一碰 · 上不封顶',a6chip:'无限代 · 无限层',a6lab:['复购 1 人','对碰 L2','对碰 L3','对碰 L4'],
-    a7sub:'8 层下线对碰奖的 10% · 每月发放',a7stats:[['纯消费者','$600','封顶'],['经营者','$2,000','封顶'],['得奖机会','详见下页','']]},
+    a7sub:'8 层下线对碰奖的 10% · 每月发放',a7stats:[['纯消费者','$600','封顶'],['经营者','$2,000','封顶'],['得奖机会','点击查看','']]},
   s5:{t:'复制的力量',sub:'只算复购奖金 · 每人每月 $5 · 计算 8 代',
     tabs:['二二复制','三三复制','四四复制','五五复制','六六复制'],
     kMonth:'每月复购收益',kTeam:'8 代团队人数',kYear:'年收益（× 12）',head:['代','人数','月收益'],
     gen:n=>'第 '+n+' 代',auto:'自动演示',stop:'停止',replay:'重播',you:'你',
-    note:'理论模型示意：假设每位成员都按此模式复制并每月复购，每人以 $5 简化计算；实际结果因人而异，不构成收益承诺。'},
+    note:''},
   s7:{t:'幸运奖是怎么来的',sub:'双轨制下，上线滑落也能帮你赚钱',
     l1:'8 代内团队人数',l2:'位置机会（本层 / 累计）',preview:'接下来：看看 8 层之内到底有多少个位置',
     play:'播放',pause:'暂停',
@@ -769,9 +823,9 @@ const I18N = {
     th:['奖金','每月','一次性 / 达标'],
     names:['直推奖','复购奖','管理奖','成就奖','贡献奖','对碰奖','幸运奖'],
     sub:{direct:'L2 $16 · L3 $100 · L4 $200',repurchase:'第 1 代 $16 · 第 2~8 代 $4 / 人',
-      mgmt:n=>'8 代内 '+fmt(n)+' 人复购 · 每满 1,000 人 $1,000',ach:n=>'8 代内 '+fmt(n)+' 人 · 达标累计',contrib:n=>'8 代内 '+fmt(n)+' 人 · 取最高档',
+      mgmt:n=>'8 代内 '+fmt(n)+' 人复购 · 每满 1,000 人 $1,000',ach:n=>'8 代内 '+fmt(n)+' 人 · 达标累计',contrib:n=>'8 代内 '+fmt(n)+' 人 · 取最高档 · 团建费可报销',
       match:'复购 $6 / 人 · 加盟 = 较小市场 BV × 15%',lucky:cap=>'8 层对碰 × 10% · 封顶 $'+fmt(cap)},
-    fine:'假设：所有成员每月复购 1P（80BV），您为 L4（8 代深度）。管理 / 成就 / 贡献奖按 8 代内复购人数；对碰按较小市场计；幸运奖以 1~8 代人数估算 8 层下线对碰的 10%，按身份封顶。理论估算，不构成收益承诺。'}
+    fine:'假设：所有成员每月复购 1P（80BV），您为 L4（8 代深度）。管理 / 成就 / 贡献奖按 8 代内复购人数；对碰按较小市场计；幸运奖以 1~8 代人数估算 8 层下线对碰的 10%，按身份封顶。'}
 }/*]HANS*/,
 'zh-Hant':{
   title:'選擇大於努力', hint:'點擊兩側 · 左右滑動 · ← → 翻頁',
@@ -807,14 +861,14 @@ const I18N = {
     a2:[['直推 · 第 1 代','80BV × 20%','$16'],['第 2~8 代','80BV × 5%','$4']],
     a3sub:'8 代內復購 · 每月發放 · 上限 10 萬人',
     a4sub:'8 代內復購 · 保持 6 個月 · 上限 10 萬人',every:'每滿 1,000 人',total:'累計',
-    a5sub:'復購人數達標 · 每月發放',a5chip:'感恩晚宴',
+    a5sub:'團建費 · 可報銷 · 人數達標每月發放',a5chip:'感恩晚宴',
     a6sub:'AB 市場 · 一單一碰 · 上不封頂',a6chip:'無限代 · 無限層',a6lab:['復購 1 人','對碰 L2','對碰 L3','對碰 L4'],
-    a7sub:'8 層下線對碰獎的 10% · 每月發放',a7stats:[['純消費者','$600','封頂'],['經營者','$2,000','封頂'],['得獎機會','詳見下頁','']]},
+    a7sub:'8 層下線對碰獎的 10% · 每月發放',a7stats:[['純消費者','$600','封頂'],['經營者','$2,000','封頂'],['得獎機會','點擊查看','']]},
   s5:{t:'複製的力量',sub:'只算復購獎金 · 每人每月 $5 · 計算 8 代',
     tabs:['二二複製','三三複制','四四複製','五五複製','六六複製'],
     kMonth:'每月復購收益',kTeam:'8 代團隊人數',kYear:'年收益（× 12）',head:['代','人數','月收益'],
     gen:n=>'第 '+n+' 代',auto:'自動演示',stop:'停止',replay:'重播',you:'你',
-    note:'理論模型示意：假設每位成員都按此模式複製並每月復購，每人以 $5 簡化計算；實際結果因人而異，不構成收益承諾。'},
+    note:''},
   s7:{t:'幸運獎是怎麼來的',sub:'雙軌制下，上線滑落也能幫你賺錢',
     l1:'8 代內團隊人數',l2:'位置機會（本層 / 累計）',preview:'接下來：看看 8 層之內到底有多少個位置',
     play:'播放',pause:'暫停',
@@ -837,9 +891,9 @@ const I18N = {
     th:['獎金','每月','一次性 / 達標'],
     names:['直推獎','復購獎','管理獎','成就獎','貢獻獎','對碰獎','幸運獎'],
     sub:{direct:'L2 $16 · L3 $100 · L4 $200',repurchase:'第 1 代 $16 · 第 2~8 代 $4 / 人',
-      mgmt:n=>'8 代內 '+fmt(n)+' 人復購 · 每滿 1,000 人 $1,000',ach:n=>'8 代內 '+fmt(n)+' 人 · 達標累計',contrib:n=>'8 代內 '+fmt(n)+' 人 · 取最高檔',
+      mgmt:n=>'8 代內 '+fmt(n)+' 人復購 · 每滿 1,000 人 $1,000',ach:n=>'8 代內 '+fmt(n)+' 人 · 達標累計',contrib:n=>'8 代內 '+fmt(n)+' 人 · 取最高檔 · 團建費可報銷',
       match:'復購 $6 / 人 · 加盟 = 較小市場 BV × 15%',lucky:cap=>'8 層對碰 × 10% · 封頂 $'+fmt(cap)},
-    fine:'假設：所有成員每月復購 1P（80BV），您為 L4（8 代深度）。管理 / 成就 / 貢獻獎按 8 代內復購人數；對碰按較小市場計；幸運獎以 1~8 代人數估算 8 層下線對碰的 10%，按身份封頂。理論估算，不構成收益承諾。'}
+    fine:'假設：所有成員每月復購 1P（80BV），您為 L4（8 代深度）。管理 / 成就 / 貢獻獎按 8 代內復購人數；對碰按較小市場計；幸運獎以 1~8 代人數估算 8 層下線對碰的 10%，按身份封頂。'}
 },
 'en':{
   title:'Choice Outweighs Effort', hint:'Tap either side · swipe · ← → to turn pages',
@@ -875,14 +929,14 @@ const I18N = {
     a2:[['Direct · Gen 1','80BV × 20%','$16'],['Gen 2–8','80BV × 5%','$4']],
     a3sub:'Repurchase in 8 gens · monthly · capped at 100K people',
     a4sub:'Within 8 gens · held 6 months · capped at 100K',every:'Every 1,000',total:'Total',
-    a5sub:'Repurchasing-member milestones · monthly',a5chip:'Gratitude Banquet',
+    a5sub:'Team-building fund · reimbursable · monthly',a5chip:'Gratitude Banquet',
     a6sub:'A/B market · 1:1 · no cap',a6chip:'Unlimited',a6lab:['Repurchase','L2 match','L3 match','L4 match'],
-    a7sub:'10% of your 8-layer downline’s matching · monthly',a7stats:[['Consumer','$600','cap'],['Operator','$2,000','cap'],['Chances','see next','']]},
+    a7sub:'10% of your 8-layer downline’s matching · monthly',a7stats:[['Consumer','$600','cap'],['Operator','$2,000','cap'],['Chances','tap card','']]},
   s5:{t:'The Power of Duplication',sub:'Repurchase bonuses only · $5 per person / month · 8 gens',
     tabs:['2 × 2','3 × 3','4 × 4','5 × 5','6 × 6'],
     kMonth:'Monthly repurchase income',kTeam:'Team size · 8 gens',kYear:'Yearly (× 12)',head:['Gen','People','Monthly'],
     gen:n=>'Gen '+n,auto:'Auto',stop:'Stop',replay:'Replay',you:'YOU',
-    note:'Illustrative model: assumes every member duplicates and repurchases monthly, simplified at $5 per person. Not a promise of income.'},
+    note:''},
   s7:{t:'Where the Lucky Bonus comes from',sub:'In a two-leg plan, even a spillover can earn for you',
     l1:'Team size within 8 gens',l2:'Positions (this layer / total)',preview:'Next: how many positions exist within 8 layers',
     play:'Play',pause:'Pause',
@@ -905,9 +959,9 @@ const I18N = {
     th:['Bonus','Monthly','One-time'],
     names:['Direct','Repurchase','Management','Achievement','Contribution','Matching','Lucky'],
     sub:{direct:'L2 $16 · L3 $100 · L4 $200',repurchase:'Gen 1 $16 · Gen 2–8 $4 per person',
-      mgmt:n=>fmt(n)+' in 8 gens · $1,000 per 1,000',ach:n=>fmt(n)+' in 8 gens · milestones reached',contrib:n=>fmt(n)+' in 8 gens · highest tier',
+      mgmt:n=>fmt(n)+' in 8 gens · $1,000 per 1,000',ach:n=>fmt(n)+' in 8 gens · milestones reached',contrib:n=>fmt(n)+' in 8 gens · highest tier · reimbursable',
       match:'Repurchase $6 / person · joins 15% of smaller BV',lucky:cap=>'10% of 8-layer matching · cap $'+fmt(cap)},
-    fine:'Assumes all members repurchase 1P (80 BV) monthly and you are Level 4. Matching uses the smaller market; lucky is estimated from gens 1–8, capped by status. Theoretical estimate, not a promise of income.'}
+    fine:'Assumes all members repurchase 1P (80 BV) monthly and you are Level 4. Matching uses the smaller market; lucky is estimated from gens 1–8, capped by status.'}
 }};
 
 /* =====================================================================
@@ -1013,7 +1067,7 @@ function renderS4(){
   // 07 lucky (HIGHLIGHT · dark)
   g.push(`<div class="aw card accent lucky rv" style="--i:8;grid-column:2;grid-row:4"><div class="lk-l"><div class="nm">${no(7)}<b>${n[6]}</b></div><div class="sub">${t.a7sub}</div><div class="big">10%</div></div>`+
     `<div class="lk-r">`+t.a7stats.map(s=>`<div class="stat"><span>${s[0]}</span><b>${s[1]}</b><em>${s[2]}</em></div>`).join('')+`</div></div>`);
-  $('#awGrid').innerHTML=g.join('');
+  $('#awGrid').innerHTML=g.join(''); bdWire();
 }
 
 /* =====================================================================
@@ -1223,9 +1277,9 @@ function compute(){
   const g1n=sum(S.A.g1)+sum(S.B.g1), g28n=sum(S.A.g28)+sum(S.B.g28), N8=g1n+g28n;
   const direct=[0,1,2].reduce((s,k)=>s+(S.A.g1[k]+S.B.g1[k])*DIR[k],0);
   const card=[0,1,2].reduce((s,k)=>s+(S.A.g1[k]+S.B.g1[k])*CARD[k],0);
-  const matchM=(REPBV*0.075)*Math.min(M.A.n,M.B.n);            // $6 per matched repurchase
+  const matchM=(40*0.15)*Math.min(M.A.n,M.B.n);            // $6 per matched repurchase
   const matchO=0.15*Math.min(M.A.bv,M.B.bv);                     // 15% of smaller-side join BV
-  let lkM=0.10*(REPBV*0.075)*Math.min(M.A.n8,M.B.n8);            // 10% of 8-layer repurchase matching (estimated from gens 1~8)
+  let lkM=0.10*(40*0.15)*Math.min(M.A.n8,M.B.n8);            // 10% of 8-layer repurchase matching (estimated from gens 1~8)
   let lkO=0.10*0.15*Math.min(M.A.bv8,M.B.bv8);                   // 10% of 8-layer join matching (estimated from gens 1~8)
   const cap=S.role==='con'?600:2000, raw=lkM+lkO, f=raw>cap?cap/raw:1; lkM*=f; lkO*=f;
   const rows={direct:{m:0,o:direct},repurchase:{m:g1n*REP1+g28n*REP28,o:0},mgmt:{m:mgmtOf(N8),o:0},ach:{m:0,o:achOf(N8)},contrib:{m:contribOf(N8),o:0},match:{m:matchM,o:matchO},lucky:{m:lkM+lkO,o:0}};
@@ -1350,9 +1404,9 @@ function lkAutoTick(){
 function lkAutoStart(){ lkAuto.on=true; lkAutoLabel(); if(lk.step>=T().s7.steps.length-1) lkGo(0); lkAutoTick(); }
 function lkAutoStop(){ lkAuto.on=false; clearTimeout(lkAuto.timer); lkAutoLabel(); }
 const LK_NOTE={
-  'zh-Hans':'示意动画：说明对碰对象只要在 8 层之内，都可能触发幸运奖；双轨树的位置数依 2 的次方成长，8 层合计 510 个位置。实际奖金依系统结算为准。',
-  'zh-Hant':'示意動畫：說明對碰對象只要在 8 層之內，都可能觸發幸運獎；雙軌樹的位置數依 2 的次方成長，8 層合計 510 個位置。實際獎金依系統結算為準。',
-  'en':'Illustrative animation: a match anywhere within your 8 layers can trigger a Lucky bonus. Two-leg tree positions double each layer, totaling 510 across 8 layers. Actual bonus follows the system\u2019s settlement.'
+  'zh-Hans':'示意动画：说明对碰对象只要在 8 层之内，都可能触发幸运奖；双轨树的位置数依 2 的次方成长，8 层合计 510 个位置。',
+  'zh-Hant':'示意動畫：說明對碰對象只要在 8 層之內，都可能觸發幸運獎；雙軌樹的位置數依 2 的次方成長，8 層合計 510 個位置。',
+  'en':'Illustrative animation: a match anywhere within your 8 layers can trigger a Lucky bonus. Two-leg tree positions double each layer, totaling 510 across 8 layers.'
 };
 function lkRelabel(){
   $('#lkNote').textContent=LK_NOTE[lang]||LK_NOTE.en;
@@ -1368,9 +1422,105 @@ function buildLucky(){
 /* =====================================================================
    language / theme / layout mode
    ===================================================================== */
+
+/* ===== Bonus detail pages (slide index 7) ===== */
+const TRP='獎奖複复復复購购對对層层數数個个與与設设為为當当後后從从時时點点說说開开還还會会員员滿满發发現现邊边計计麼么來来將将達达標标續续貢贡擴扩薦荐紹绍長长運运級级總总觸触項项進进應应費费買买錢钱動动線线團团隊队錄录這这們们裡里內内無无壓压縮缩單单擇择憑凭於于領领場场澱淀約约親亲積积讓让實实際际結结準准諾诺兩两規规則则門门檻槛統统並并該该處处';
+const TRM={}; for(let i=0;i<TRP.length;i+=2) TRM[TRP[i]]=TRP[i+1];
+const zc=s=>lang==='zh-Hans'?String(s).replace(/[\u4e00-\u9fff]/g,c=>TRM[c]||c):String(s);
+const BACKT={'zh-Hant':'‹ 返回獎金制度','zh-Hans':'‹ 返回奖金制度','en':'‹ Back'};
+const HINTT={'zh-Hant':'點擊任一方塊，看動畫詳解','zh-Hans':'点击任一方块，看动画详解','en':'Tap any card for an animated walkthrough'};
+const BDNOTE='';
+const BD=[
+{tree:'g',sub:'每推薦一位 · 一次性 · 對方加盟時發放',lab:['對方級別','你領到'],steps:[
+ ['你親自推薦的人是第 1 代','你直接推薦加盟的人，就是你的第 1 代。每多一位，就多一筆直推獎。',[1],'3 位','—'],
+ ['依對方級別領現金','對方加盟 L2 你得 <b>$16</b>；L3 得 <b>$100</b>；L4 得 <b>$200</b>（80／500／1000 BV × 20%）。',[1],'L2','$16'],
+ ['L3、L4 另送產品卡','L3 另送 <b>$100</b>、L4 另送 <b>$200</b> 產品卡（非現金）。',[1],'L4','$200 + 卡'],
+ ['只算第 1 代','第 2 代以後的人不產生直推獎，他們每月的消費由「復購獎」處理。',[1,2,3],'第 2 代起','復購獎']]},
+{tree:'g',sub:'所有獎金來自復購 · 每月發放',lab:['第 1 代／每人','第 2~8 代／每人'],steps:[
+ ['團隊每月復購，你才有獎金','成員每月復購 1P（80 BV），你就能領復購獎。沒有復購就沒有獎金。',[1,2,3],'—','—'],
+ ['第 1 代：80BV × 20% = $16','直推的人每復購一次，你得 <b>$16</b>。',[1],'$16','—'],
+ ['第 2~8 代：80BV × 5% = $4','第 2 到第 8 代的人每復購一次，你各得 <b>$4</b>。',[2,3],'$16','$4'],
+ ['領幾代，看你的級別','L2 領 2 代、L3 領 4 代、L4 領 8 代。壓縮制：沒復購的人不佔代數，拿足 8 代會員。',[1,2,3],'L4','8 代']]},
+{tree:'g',sub:'8 代內復購 · 每月發放 · 上限 10 萬人',lab:['8 代內復購人數','每月管理獎'],steps:[
+ ['只算 8 代內有復購的人','你的 8 代團隊裡，當月有復購的人才計入人數。',[1],'—','—'],
+ ['滿 100 人，每月 $100','復購人數到 <b>100 人</b>，每月領 <b>$100</b>。',[1,2],'100 人','$100'],
+ ['滿 300 人，每月 $300','成長到 <b>300 人</b>，每月提升為 <b>$300</b>。',[1,2,3],'300 人','$300'],
+ ['滿 500 人，每月 $500','<b>500 人</b>時，每月 <b>$500</b>。',[1,2,3],'500 人','$500'],
+ ['之後每滿 1,000 人，再加 $1,000','1,000 人起，每多 1,000 人，每月再加 <b>$1,000</b>，計到 10 萬人，最高 <b>$100,000</b>／月。',[1,2,3],'10 萬人','$100,000']]},
+{tree:'g',sub:'8 代內復購 · 保持 6 個月 · 一次性 · 上限 10 萬人',lab:['達標人數','此階段獎金'],steps:[
+ ['達標就領一次','8 代內復購人數每達到一個門檻，就領一次該門檻的成就獎，需<b>保持 6 個月</b>。',[1],'—','—'],
+ ['100 人 → $1,000','第一個門檻 <b>100 人</b>，一次性 <b>$1,000</b>。',[1,2],'100 人','$1,000'],
+ ['300 人 → $3,000','<b>300 人</b>，再領 <b>$3,000</b>。',[1,2,3],'300 人','$3,000'],
+ ['500 人 → $5,000','<b>500 人</b>，再領 <b>$5,000</b>。',[1,2,3],'500 人','$5,000'],
+ ['每滿 1,000 人 → $10,000','之後每滿 1,000 人，再領 <b>$10,000</b>（共 99 次）；10 萬人再領 <b>$1,000,000</b>。',[1,2,3],'每 1,000 人','$10,000'],
+ ['累計最高 $1,999,000','9,000 + 990,000 + 1,000,000 = <b>$1,999,000</b>。',[1,2,3],'10 萬人','$1,999,000']]},
+{tree:'g',sub:'團建費 · 可報銷 · 復購人數達標每月發放',lab:['復購人數','每月團建費額度'],steps:[
+ ['貢獻獎是團建費','貢獻獎是設計給團隊建設的費用，例如<b>感恩晚宴</b>，屬於可以<b>報銷</b>的金額。',[1],'—','—'],
+ ['100 人 → 每月 $600','8 代內復購人數到 <b>100 人</b>，每月可報銷 <b>$600</b> 的團建費。',[1,2],'100 人','$600'],
+ ['300 人 → 每月 $800','<b>300 人</b>，每月可報銷 <b>$800</b>。',[1,2,3],'300 人','$800'],
+ ['500 人 → 每月 $1,000','<b>500 人</b>，每月可報銷 <b>$1,000</b>。',[1,2,3],'500 人','$1,000'],
+ ['1,000 人 → 每月 $1,200','<b>1,000 人</b>，每月可報銷 <b>$1,200</b>，用於感恩晚宴等團隊活動。',[1,2,3],'1,000 人','$1,200']]},
+{tree:'b',sub:'AB 市場 · 一單一碰 · 無限代、無限層、上不封頂',lab:['每碰一次','金額'],steps:[
+ ['你有 A、B 兩個市場','雙軌制：你的下面只有左（A）右（B）兩條腿，所有人都會被放進其中一邊。',['A','B'],'A / B','—'],
+ ['一邊一單，碰一次','A 市場一單、B 市場一單配成一對，叫「一單一碰」，不沉澱積分。',[1],'1 對','—'],
+ ['復購對碰：每碰 $6','每一對復購（40BV × 15%）得 <b>$6</b>。',['A','B'],'復購 1 人','$6'],
+ ['加盟對碰：較小市場 BV × 15%','新會員加盟：L2 得 <b>$12</b>、L3 得 <b>$75</b>、L4 得 <b>$150</b>。',['A','B'],'對碰 L4','$150'],
+ ['無限代、無限層、不封頂','不論多深都能對碰，也沒有次數上限；兩邊有人，就持續產生對碰獎。',[1,2,3,4],'上限','無']]}
+];
+const bd={n:0,s:0,built:-1,on:false,timer:0,open(){bdRender()},stop(){bdAutoStop()},step(d){bdStep(d)}};
+function bdBuild(k){
+  const D=BD[k],L=D.tree==='b'?[1,2,4,8,16]:[1,3,6,12],W=1040,pos=[];
+  let lk='',nd='',lb='';
+  L.forEach((n,l)=>{pos[l]=[];for(let i=0;i<n;i++)pos[l].push([(i+.5)/n*W,70+l*560/(L.length-1)]);});
+  L.forEach((n,l)=>{ if(!l) return; pos[l].forEach((p,i)=>{
+    const q=pos[l-1][(D.tree==='g'&&l===1)?0:i>>1], s=D.tree==='b'?'AB'[i>>(l-1)]:'x';
+    lk+=`<path class="lk-link" data-l="${l}" data-s="${s}" d="M${q[0]},${q[1]}L${p[0]},${p[1]}"/>`;
+    nd+=`<g class="lk-pos" data-l="${l}" data-s="${s}"><circle cx="${p[0]}" cy="${p[1]}" r="${l<3?15:11}"/></g>`; });
+    lb+=`<text class="lk-layer-lbl" x="14" y="${pos[l][0][1]+5}">${zc('第 '+l+(D.tree==='g'?' 代':' 層'))}</text>`; });
+  if(D.tree==='g') lb+=`<text class="lk-layer-lbl" x="520" y="722" text-anchor="middle">${zc('⋯ 第 8 代')}</text>`;
+  const r=pos[0][0];
+  $('#bdSvg').innerHTML=`<g>${lk}</g><g>${nd}</g><g class="lk-node-you" transform="translate(${r[0]},${r[1]})"><circle r="30"/><text y="1" text-anchor="middle" dominant-baseline="central">${T().s5.you}</text></g>${lb}`;
+}
+function bdRender(){
+  const k=bd.n,D=BD[k],st=D.steps[bd.s];
+  if(bd.built!==k){bdBuild(k);bd.built=k;}
+  $('#bdTitle').textContent=T().s4.n[k]+(isZh()?zc('怎麼運作'):' explained');
+  $('#bdSub').textContent=zc(D.sub); $('#bdNote').textContent=zc(BDNOTE);
+  $('#bdStepNo').textContent=(bd.s+1)+' / '+D.steps.length;
+  $('#bdStepLab').textContent=zc(st[0]); $('#bdStepText').innerHTML=zc(st[1]);
+  $('#bdL1').textContent=zc(D.lab[0]); $('#bdV1').textContent=zc(st[3]);
+  $('#bdL2').textContent=zc(D.lab[1]); $('#bdV2').textContent=zc(st[4]);
+  const lit=el=>st[2].some(x=>x===+el.dataset.l||x===el.dataset.s);
+  $$('#bdSvg .lk-pos').forEach(p=>{const on=lit(p); p.classList.toggle('hit',on); p.style.opacity=on?1:.35;});
+  $$('#bdSvg .lk-link').forEach(a=>{a.classList.toggle('on',lit(a)); a.style.opacity=lit(a)?1:.35;});
+}
+function bdGo(n){ bd.s=clamp(n,0,BD[bd.n].steps.length-1); bdRender(); }
+function bdStep(d){ bdAutoStop(); bdGo(bd.s+d); }
+function bdAutoLabel(){ const b=$('#bdPlay'); b.textContent=bd.on?T().s7.pause:T().s7.play; b.classList.toggle('on',bd.on); }
+function bdTick(){ if(bd.s>=BD[bd.n].steps.length-1){bdAutoStop();return;} bdGo(bd.s+1); bd.timer=setTimeout(bdTick,2600); }
+function bdAutoStart(){ bd.on=true; if(bd.s>=BD[bd.n].steps.length-1) bdGo(0); bdAutoLabel(); bd.timer=setTimeout(bdTick,2600); }
+function bdAutoStop(){ bd.on=false; clearTimeout(bd.timer); bdAutoLabel(); }
+function openBonus(i){ if(i===6){ go(4); return; } bd.n=i; bd.s=0; bd.built=-1; go(7); }
+function bdWire(){
+  $$('#awGrid .aw').forEach((el,i)=>{ el.setAttribute('data-nogo',''); el.dataset.bonus=i; el.tabIndex=0; el.setAttribute('role','button'); });
+  if(!$('.bd-hint')) $('.s4 .base').insertAdjacentHTML('afterend','<p class="bd-hint rv" style="--i:1"></p>');
+  bdRelabel();
+}
+function bdRelabel(){
+  $$('[data-back]').forEach(b=>{b.textContent=BACKT[lang]||BACKT.en;});
+  const h=$('.bd-hint'); if(h) h.textContent=HINTT[lang]||HINTT.en;
+  bdAutoLabel(); if(idx===7) bdRender();
+}
+$$('[data-back]').forEach(b=>b.addEventListener('click',()=>go(3)));
+$('#bdPrev').addEventListener('click',()=>bdStep(-1));
+$('#bdNext').addEventListener('click',()=>bdStep(1));
+$('#bdPlay').addEventListener('click',()=>bd.on?bdAutoStop():bdAutoStart());
+$('#awGrid').addEventListener('click',e=>{ const c=e.target.closest('.aw[data-bonus]'); if(c) openBonus(+c.dataset.bonus); });
+$('#awGrid').addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){ const c=e.target.closest('.aw[data-bonus]'); if(c){ e.preventDefault(); e.stopPropagation(); openBonus(+c.dataset.bonus); } } });
+
 function renderAll(){
   applyI18n(); renderS2(); renderS3(); renderS4(); labelTabs(); setRows(); setKpiSizes();
-  recalc(); paint(viz.p); lkRelabel();
+  recalc(); paint(viz.p); lkRelabel(); bdRelabel();
 }
 function setLang(l){ lang=l; html.lang=l; store.set('deck-lang',l); renderAll(); }
 function setTheme(m){ theme=m; html.dataset.theme=m; store.set('deck-theme',m); $$('#themeSeg button').forEach(b=>b.classList.toggle('on',b.dataset.themeSet===m)); setRows(); paint(viz.p); }
@@ -1385,7 +1535,8 @@ function fit(){
    navigation
    ===================================================================== */
 const slides=$$('.slide'), prog=$('#prog');
-prog.innerHTML=slides.map((_,i)=>`<button aria-label="${i+1}" data-go="${i}"></button>`).join('');
+const DETAIL=new Set([4,7]), MAIN=slides.map((_,i)=>i).filter(i=>!DETAIL.has(i));
+prog.innerHTML=MAIN.map((s,k)=>`<button aria-label="${k+1}" data-go="${s}"></button>`).join('');
 function go(n){
   n=clamp(n,0,slides.length-1);
   slides.forEach((s,i)=>{
@@ -1393,16 +1544,19 @@ function go(n){
     s.toggleAttribute('inert',i!==n); s.setAttribute('aria-hidden',i!==n);
     if(i===n) s.scrollTop=0;
   });
-  $$('#prog button').forEach((b,i)=>b.classList.toggle('on',i===n));
-  $('#pageNo').textContent=(n+1)+' / '+slides.length;
-  $('#prevBtn').disabled=n===0; $('#nextBtn').disabled=n===slides.length-1;
+  $$('#prog button').forEach(b=>b.classList.toggle('on',+b.dataset.go===(DETAIL.has(n)?3:n)));
+  $('#pageNo').textContent=(MAIN.indexOf(DETAIL.has(n)?3:n)+1)+' / '+MAIN.length;
+  $('#prevBtn').disabled=n===0||DETAIL.has(n); $('#nextBtn').disabled=n===MAIN[MAIN.length-1]||DETAIL.has(n);
   const was=idx; idx=n;
-  try{history.replaceState(null,'','#'+(n+1))}catch(e){}
+  if(!DETAIL.has(n)) try{history.replaceState(null,'','#'+(n+1))}catch(e){}
   if(n===5){ if(was!==5||!viz.raf){ sizeCanvas(); selectModel(viz.mi,true); } }
   else { autoStop(); cancelAnimationFrame(viz.raf); viz.raf=0; }
   if(n===4){ if(was!==4){ lk.built=false; lkGo(0); } } else { lkAutoStop(); }
+  if(n===7) bd.open(); else bd.stop();
 }
-const next=()=>go(idx+1), prev=()=>go(idx-1);
+const step=d=>{ if(idx===7){bd.step(d);return;} if(idx===4){lkStep(d);return;}
+  let n=idx+d; while(DETAIL.has(n)) n+=d; if(n>=0&&n<slides.length) go(n); };
+const next=()=>step(1), prev=()=>step(-1);
 
 let chromeTimer=0;
 function showChrome(ms=2800){ const c=$('#chrome'); c.classList.add('show'); clearTimeout(chromeTimer); chromeTimer=setTimeout(()=>c.classList.remove('show'),ms); }
@@ -1421,7 +1575,7 @@ vp.addEventListener('pointerup',e=>{
 vp.addEventListener('pointercancel',()=>{start=null});
 vp.addEventListener('pointermove',()=>showChrome(2200));
 vp.addEventListener('wheel',e=>{
-  if(mobile||idx===6) return;
+  if(mobile||idx===6||DETAIL.has(idx)) return;
   const now=performance.now(); if(now-lastWheel<700||Math.abs(e.deltaY)<30) return;
   lastWheel=now; e.deltaY>0?next():prev();
 },{passive:true});
@@ -1430,11 +1584,11 @@ document.addEventListener('keydown',e=>{
   const tg=e.target;
   if(tg&&tg.matches&&tg.matches('input,textarea,select')){ if(e.key==='Escape') tg.blur(); return; }
   if(e.metaKey||e.ctrlKey||e.altKey) return;
-  const k=e.key;
-  if(tg&&tg.closest&&tg.closest('button')&&(k===' '||k==='Enter')) return;
+  const k=e.key; if(k==='Escape'&&$('#chrome').classList.contains('open')){closeSet();return;} if(k==='Escape'&&DETAIL.has(idx)){go(3);return;}
+  if(tg&&tg.closest&&tg.closest('button,a')&&(k===' '||k==='Enter')) return;
   if(k==='ArrowRight'||k==='PageDown'||k===' '||k==='Enter'){e.preventDefault();next();}
   else if(k==='ArrowLeft'||k==='PageUp'||k==='Backspace'){e.preventDefault();prev();}
-  else if(k==='Home'){go(0);} else if(k==='End'){go(slides.length-1);}
+  else if(k==='Home'){go(0);} else if(k==='End'){go(MAIN[MAIN.length-1]);}
   else if(k==='f'||k==='F'){toggleFs();}
   else if(k==='t'||k==='T'){setTheme(theme==='light'?'dark':'light');}
   else if(k==='l'||k==='L'){setLang(LANGS[(LANGS.indexOf(lang)+1)%LANGS.length]);}
@@ -1473,6 +1627,9 @@ window.addEventListener('hashchange',()=>{const n=parseInt(location.hash.slice(1
 /* =====================================================================
    boot
    ===================================================================== */
+function closeSet(){ $('#chrome').classList.remove('open'); $('#fabS').setAttribute('aria-expanded','false'); }
+$('#fabS').addEventListener('click',()=>{ const o=$('#chrome').classList.toggle('open'); $('#fabS').setAttribute('aria-expanded',o); });
+document.addEventListener('pointerdown',e=>{ if(!e.target.closest('#chrome')) closeSet(); });
 html.lang=lang; html.dataset.theme=theme;
 applyMode();
 buildChart(); buildTabs(); buildRows(); buildCalc(); buildLucky();
